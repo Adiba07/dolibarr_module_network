@@ -59,30 +59,20 @@ class Actionstwiiitor
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
-	function doActions($parameters, &$object, &$action, $hookmanager)
+	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		$error = 0; // Error counter
-		$myvalue = 'test'; // A result value
 
-		print_r($parameters);
-		echo "action: " . $action;
-		print_r($object);
-
-		if (in_array('somecontext', explode(':', $parameters['context'])))
-		{
-		  // do something only for the context 'somecontext'
-		}
-
-		if (! $error)
-		{
-			$this->results = array('myreturn' => $myvalue);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		}
-		else
-		{
-			$this->errors[] = 'Error message';
-			return -1;
-		}
-	}
+		if(empty($object->element)) return 0;
+		
+		
+		if($object->element == 'societe' && !empty($object->code_client)) $ref = $object->code_client;
+		elseif(!empty($object->ref))$ref = $object->ref;
+		
+		if(empty($ref)) return 0;
+		
+		?>
+		<script type="text/javascript" src="<?php echo dol_buildpath('/twiiitor/js/twiiitor.js.php?element='.$object->element.'&id='.$object->id.'&ref='.$ref,1) ?>"></script>
+		<?php	
+		
+	}	
 }

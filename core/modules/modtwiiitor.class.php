@@ -46,7 +46,7 @@ class modtwiiitor extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = ; // 104000 to 104999 for ATM CONSULTING
+		$this->numero = 104730; // 104000 to 104999 for ATM CONSULTING
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'twiiitor';
 
@@ -87,7 +87,11 @@ class modtwiiitor extends DolibarrModules
 		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@twiiitor')) // Set here all workflow context managed by module
 		//                        );
-		$this->module_parts = array();
+		$this->module_parts = array(
+			'hooks'=>array('globalcard')
+			,'js' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.min.js')
+			,'css' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.css')
+		);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/twiiitor/temp");

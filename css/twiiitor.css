@@ -1,0 +1,5 @@
+#twittor-panel {
+    display: table-cell;
+    float: none;
+    vertical-align: top;
+}
