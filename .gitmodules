@@ -1,0 +1,3 @@
+[submodule "lib/textcomplete"]
+	path = lib/textcomplete
+	url = git@github.com:atm-alexis/jquery-textcomplete.git
