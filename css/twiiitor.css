@@ -3,3 +3,13 @@
     float: none;
     vertical-align: top;
 }
+
+#twittor-panel input {
+	width: 100%;
+}
+
+#twittor-panel div.comm {
+	margin-top:2px;
+	background-color: #E0E0F8;
+	padding: 2px;	
+}

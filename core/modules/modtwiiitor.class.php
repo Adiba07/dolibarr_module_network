@@ -90,7 +90,7 @@ class modtwiiitor extends DolibarrModules
 		$this->module_parts = array(
 			'hooks'=>array('globalcard')
 			,'js' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.min.js')
-			,'css' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.css')
+			,'css' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.css','/twiiitor/css/twiiitor.css')
 		);
 
 		// Data directories to create when module is enabled.
