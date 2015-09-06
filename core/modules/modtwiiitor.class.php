@@ -89,7 +89,7 @@ class modtwiiitor extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'hooks'=>array('globalcard')
-			,'js' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.min.js')
+			,'js' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.min.js','/twiiitor/lib/arbor/lib/arbor.js','/twiiitor/lib/arbor/lib/arbor-tween.js')
 			,'css' => array('/twiiitor/lib/textcomplete/dist/jquery.textcomplete.css','/twiiitor/css/twiiitor.css')
 		);
 
@@ -140,8 +140,11 @@ class modtwiiitor extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array();
-
+        /*$this->tabs = array(
+			'contact:+sociogram:Sociogram:twiiitor@twiiitor:$user->rights->twiiitor->read:/twiiitor/sociogram.php?id=__ID__&type_object=contact'
+			
+		);
+*/
         // Dictionaries
 	    if (! isset($conf->twiiitor->enabled))
         {
@@ -177,12 +180,12 @@ class modtwiiitor extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Lire les infos sociales';	// Permission label
+		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+						// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
 
 
 		// Main menu entries

@@ -1,3 +1,6 @@
 [submodule "lib/textcomplete"]
 	path = lib/textcomplete
 	url = git@github.com:atm-alexis/jquery-textcomplete.git
+[submodule "lib/arbor"]
+	path = lib/arbor
+	url = git@github.com:atm-alexis/arbor.git
