@@ -62,6 +62,7 @@ function showSociogram() {
     // add some nodes to the graph and watch it go...
     sys.addEdge('@Alexis','@Bob',{label:'cousin'});
     sys.addEdge('#BobConsulting','@Bob',{label:'dirigeant'});
+    sys.addEdge('#BobConsulting','@Marie',{label:'commerciale'});
     sys.addEdge('@Alexis','@Marie',{label:'maîtresse'});
     sys.addEdge('@Alexis','#ATM',{label:'dirigeant'});
     sys.addEdge('@Maxime','#ATM',{label:'dirigeant'});
@@ -97,10 +98,18 @@ var Renderer = function(canvas){
 
           // draw a line from pt1 to pt2
           ctx.save();
-          ctx.setLineDash([5, 15]);
+          
+          if(edge.source.name[0] == '#' || edge.target.name[0] == '#') {
+          	ctx.strokeStyle = "rgba(0,100,100, 1)";
+            ctx.lineWidth = 2
+          }
+          else {
+          	ctx.setLineDash([5, 15]);	
+          	ctx.strokeStyle = "rgba(0,100,0, 1)";
+          	ctx.lineWidth = 1
+          }
+          
 
-          ctx.strokeStyle = "rgba(0,100,0, 1)"
-          ctx.lineWidth = 2
           ctx.beginPath();
           ctx.moveTo(pt1.x, pt1.y);
           ctx.lineTo(pt2.x, pt2.y);
@@ -130,14 +139,17 @@ var Renderer = function(canvas){
 		      ctx.lineWidth = 5;
 		      ctx.strokeStyle = '#003300';
 		      ctx.stroke();
+		      ctx.font = "30px Arial";  			
+		  }
+		  else {
 		  	
+          	ctx.font = "20px Arial";
 		  }
 
           // draw a rectangle centered at pt
           //
           //ctx.fillStyle = (node.data.alone) ? "orange" : "black"
           //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)*/
-          ctx.font = "30px Arial";
           ctx.fillStyle = "blue";
 		  ctx.textAlign = "center";
           ctx.fillText(node.name, pt.x, pt.y);
