@@ -60,18 +60,15 @@ function showSociogram() {
     sys.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
 
     // add some nodes to the graph and watch it go...
-    sys.addEdge('Alexis','cousin')
-    sys.addEdge('Alexis','dirigeant')
-    sys.addEdge('ATM','dirigeant')
-    sys.addEdge('Alexis','maîtresse')
-    sys.addEdge('maîtresse','Marie')
-    sys.addEdge('Alexis','marié')
-    sys.addEdge('cousin','Bob')
-    sys.addEdge('marié','Daphné')
-    sys.addEdge('amant','Robert')
-    sys.addEdge('Daphné','amant')
+    sys.addEdge('@Alexis','@Bob',{label:'cousin'});
+    sys.addEdge('#BobConsulting','@Bob',{label:'dirigeant'});
+    sys.addEdge('@Alexis','@Marie',{label:'maîtresse'});
+    sys.addEdge('@Alexis','#ATM',{label:'dirigeant'});
+    sys.addEdge('@Maxime','#ATM',{label:'dirigeant'});
+    sys.addEdge('@Maxime','@Alexis',{label:'associé'});
+    sys.addEdge('@Alexis','@Dapné',{label:'marié'});
+    sys.addEdge('@Robert','@Dapné',{label:'amant'});
     
-
 	
 	
 }
@@ -99,20 +96,45 @@ var Renderer = function(canvas){
           // pt2:  {x:#, y:#}  target position in screen coords
 
           // draw a line from pt1 to pt2
-          ctx.strokeStyle = "rgba(0,0,0, 2)"
-          ctx.lineWidth = 1
-          ctx.beginPath()
-          ctx.moveTo(pt1.x, pt1.y)
-          ctx.lineTo(pt2.x, pt2.y)
-          ctx.stroke()
+          ctx.save();
+          ctx.setLineDash([5, 15]);
+
+          ctx.strokeStyle = "rgba(0,100,0, 1)"
+          ctx.lineWidth = 2
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+          ctx.stroke();
+          
+          ctx.restore();
+          
+          ctx.font = "20px Arial";
+          ctx.fillStyle = "orange";
+		  ctx.textAlign = "center";
+          ctx.fillText(edge.data.label, pt1.x + ((pt2.x - pt1.x) / 2), pt1.y + ((pt2.y - pt1.y) / 2) );
+          
         })
 
         particleSystem.eachNode(function(node, pt){
           // node: {mass:#, p:{x,y}, name:"", data:{}}
           // pt:   {x:#, y:#}  node position in screen coords
 
+		  
+		  var w = 50;
+		  
+		  if(node.name[0] == "#") {
+			  ctx.beginPath();
+	      	  ctx.arc(pt.x, pt.y,w, 0, 2 * Math.PI, false);
+		      ctx.fillStyle = 'green';
+		      ctx.fill();
+		      ctx.lineWidth = 5;
+		      ctx.strokeStyle = '#003300';
+		      ctx.stroke();
+		  	
+		  }
+
           // draw a rectangle centered at pt
-          //var w = 100
+          //
           //ctx.fillStyle = (node.data.alone) ? "orange" : "black"
           //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)*/
           ctx.font = "30px Arial";
