@@ -42,13 +42,16 @@ function _comments($id, $element) {
 	
 	$PDOdb=new TPDOdb;
 	$r='';
-	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid,t.comment 
+	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
 	FROM ".MAIN_DB_PREFIX."twiiit t LEFT JOIN ".MAIN_DB_PREFIX."twiiit_tag tg ON (tg.fk_twiiit=t.rowid) 
 	 WHERE (t.fk_object=".(int)$id." AND t.type_object='".$element."') OR (tg.fk_object=".(int)$id." AND tg.type_object='".$element."')
 	 ORDER BY t.date_cre DESC");
 	foreach($Tab as &$row) {
+				
+		$twiiit = new TTwiiit;
+		$twiiit->load($PDOdb, $row->rowid);		
 		
-		$r.='<div class="comm">'.$row->comment.'</div>';
+		$r.='<div class="comm">'.$twiiit->getComment().'</div>';
 		
 	}
 	

@@ -25,6 +25,21 @@ class TTwiiit extends TObjetStd{
 		parent::save($PDOdb);
 	}
 	
+	function getComment() {
+		 $comm = $this->comment;
+		
+		 $comm = preg_replace_callback(
+	        '/(^|\s)@(\w*)/',
+	        function ($matches) {
+	            return '<a href="'.dol_buildpath('/twiiitor/go.php',1).'?tag='.$matches[0].'" class="twiiit-login">'.$matches[0].'</a>';
+	        },
+	        $comm
+	    );
+		
+		
+		 return $comm;
+	}
+	
 	function set_tags($pattern) {
 		$TTag = array();
 		//print $this->comment.' '.$pattern.'<br>';
