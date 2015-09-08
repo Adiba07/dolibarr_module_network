@@ -268,7 +268,7 @@ function setTextTag() {
 	        .fail(function ()     { callback([]);   });
 	    },
 	    replace: function (value) {
-	      return '$1:' + value + ': ';
+	      return '$1:' + value + ' ';
 	    },
 	    cache: true
 	  }

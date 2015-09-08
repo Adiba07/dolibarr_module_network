@@ -16,6 +16,46 @@ class TTwiiit extends TObjetStd{
 		$this->setChild('TTwiiitTag','fk_twiiit');
 	}
 	
+	function save(&$PDOdb) {
+		
+		$this->set_tags('/(^|\s)@(\w*)/');
+		$this->set_tags('/(^|\s):(\w*)/');
+		$this->set_tags('/(^|\s)#(\w*)/');
+		
+		parent::save($PDOdb);
+	}
+	
+	function set_tags($pattern) {
+		$TTag = array();
+		//print $this->comment.' '.$pattern.'<br>';
+		$nb = preg_match_all($pattern, $this->comment, $TTag);
+		if($nb>0) {
+		//print '<pre>';
+		//var_dump($TTag);
+			
+			$PDOdb=new TPDOdb;
+			
+			foreach($TTag[0] as $tag) {
+				$found=false;
+				foreach($this->TTwiiitTag as &$t) {
+					if($t->tag === $tag) {
+						$found = true;
+						break;
+					}
+					
+				}
+				
+				if(!$found) {
+					$k = $this->addChild($PDOdb, 'TTwiiitTag');
+					$this->TTwiiitTag[$k]->tag = $tag;
+				}
+				
+			}
+			
+		}
+		
+	}
+	
 }
 class TTwiiitTag extends TObjetStd{
 /*
