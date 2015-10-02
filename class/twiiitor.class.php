@@ -21,6 +21,27 @@ class TTwiiit extends TObjetStd{
 		
 	}
 	
+	function getNomUrl() {
+		global $db;
+		
+		$object_name = ucfirst($this->type_object);
+		if(class_exists($object_name)) {
+			
+			$o=new $object_name($db);
+			if($o->fetch($this->fk_object)>0) {
+				
+				if(method_exists($o, 'getNomUrl')) {
+					return $o->getNomUrl(1);
+				}
+				
+			}
+			
+			
+		}
+
+		return '';		
+	}
+	
 	function save(&$PDOdb) {
 		
 		/*$this->set_tags('/(^|\s)@(\w*)/');
@@ -34,9 +55,9 @@ class TTwiiit extends TObjetStd{
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace('/@(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/#(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/:(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/@(\\w+)/','<a class="user" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/#(\\w+)/','<a class="object" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/:(\\w+)/','<a class="rel" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
 	}

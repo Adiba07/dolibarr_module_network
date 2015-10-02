@@ -25,3 +25,27 @@
 	color:#a5a5a5;
 	text-align: right;
 }
+#twittor-panel div.comm div.object a {
+	color:green;
+	
+}
+
+#twittor-panel div.comm a.user {
+	color:blue;
+}
+
+#twittor-panel div.comm a.object {
+	color:#fff;
+	border-radius: 3px;
+	padding:1px 3px;
+	background-color: #008000;
+}
+#twittor-panel div.comm a.rel {
+	color:#fff;
+	border-radius: 3px;
+	padding:1px 3px;
+	background-color: purple;
+}
+#twittor-panel div.comm a.user {
+	color:blue;
+}

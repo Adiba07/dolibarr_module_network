@@ -33,6 +33,7 @@ $(document).ready(function() {
 		     ,method:'post'
 		}).done(function (data) { 
 			TwiiitorLoadComment(); 
+			$('#twittor-panel textarea[name=comment]').val("");
 		});
 			
 		

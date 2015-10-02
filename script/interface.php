@@ -76,7 +76,19 @@ function _comments($id,$ref, $element) {
 		$twiiit = new TTwiiit;
 		$twiiit->load($PDOdb, $row->rowid);		
 		
-		$r.='<div class="comm">'.$twiiit->getComment().'<div class="date">'.dol_print_date($twiiit->date_cre, 'dayhourtextshort').'</div></div>';
+		$r.='<div class="comm">';
+		
+		if($id!=$twiiit->fk_object || $element!=$twiiit->type_object) {
+			$origin_element = $twiiit->getNomUrl();
+			if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div>';	
+		}
+		
+		
+		$r.=$twiiit->getComment();
+		
+		$r.='<div class="date">'.dol_print_date($twiiit->date_cre, 'dayhourtextshort').'</div>';
+		
+		$r.='</div>';
 		
 	}
 	
