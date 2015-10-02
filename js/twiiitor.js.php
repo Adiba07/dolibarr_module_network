@@ -11,13 +11,18 @@ $(document).ready(function() {
 	$div.attr('id','twittor-panel');
 	$div.append('<textarea name="comment"></textarea>');
 	
-	$button = $('<input type="button" name="btcomment" value="<?php echo $langs->trans('AddComment') ?>">');
+	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('AddComment') ?>">');
 	$button.click(function() {
+		
+		var comment = $('#twittor-panel textarea[name=comment]').val();
+		
+		if(comment.trim() == '') return false;
+		
 		$.ajax({
 			url : '<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>'
 			,data:{ 
 		      		put:"comment"
-		      		,comment:$('#twittor-panel textarea[name=comment]').val()
+		      		,comment:comment
 		      		, element:"<?php echo GETPOST('element') ?>"
 		      		, ref:"<?php echo GETPOST('ref') ?>"
 		      		, id:<?php echo GETPOST('id') ?> 
