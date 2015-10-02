@@ -49,7 +49,33 @@ $(document).ready(function() {
 	setTextTag();
 	
 });
-
+var sysArbor = null;
+function getEdge(ref, element, id) {
+	
+	$.ajax({
+		url : '<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>'
+		,data:{ 
+	      		get:"graph"
+	      		, element:element
+	      		, ref:ref
+	      		, id:id
+	     }
+	     ,method:'get'
+	     ,dataType:'json'
+	}).done(function (data) { 
+		
+		for (x in data) {
+			edge = data[x];
+			
+			if(edge.from.length>1 && edge.to.length>1) {
+				sysArbor.addEdge(edge.from,edge.to,{label:edge.label});	
+			}
+				
+		}
+		
+	});
+	
+}
 
 function showSociogram() {
 	
@@ -64,12 +90,14 @@ function showSociogram() {
 		
 	});
 
-	var sys = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
-    sys.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
-    sys.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
+	sysArbor = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
+    sysArbor.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
+    sysArbor.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
+
+	getEdge("<?php echo GETPOST('ref') ?>", "<?php echo GETPOST('element') ?>", <?php echo GETPOST('id') ?>);
 
     // add some nodes to the graph and watch it go...
-    sys.addEdge('@Alexis','@Bob',{label:'cousin'});
+    /*sys.addEdge('@Alexis','@Bob',{label:'cousin'});
     sys.addEdge('#BobConsulting','@Bob',{label:'dirigeant'});
     sys.addEdge('#BobConsulting','@Marie',{label:'commerciale'});
     sys.addEdge('@Alexis','@Marie',{label:'maîtresse'});
@@ -78,7 +106,7 @@ function showSociogram() {
     sys.addEdge('@Maxime','@Alexis',{label:'associé'});
     sys.addEdge('@Alexis','@Dapné',{label:'marié'});
     sys.addEdge('@Robert','@Dapné',{label:'amant'});
-    
+    */
 	
 	
 }

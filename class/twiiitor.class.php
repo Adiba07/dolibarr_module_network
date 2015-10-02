@@ -62,6 +62,104 @@ class TTwiiit extends TObjetStd{
 		 return $comm;
 	}
 	
+	static function extractTags($s, $TReg) {
+		$Tab = array();
+	
+		foreach($TReg as $reg) {
+			preg_match_all($reg, $s, $match);
+			foreach($match[0] as &$m) {
+				if(strlen($m)>1) $Tab[md5($m)] = $m;	
+			}
+			
+		}
+	
+		return $Tab;
+	}
+	
+	static function getRefByObject(&$object) {
+		global $db;
+		
+		$ref = '';
+				
+		if($object->element == 'societe' && !empty($object->code_client)) $ref = $object->code_client;
+		else if($object->element == 'societe' ) $ref = $object->name;
+		else if($object->element == 'contact' ) {
+			dol_include_once('/societe/class/societe.class.php');
+			
+			$soc=new Societe($db);
+			$soc->fetch($object->socid);
+			$ref = trim( (!empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'_'.$object->lastname);
+		}
+		else if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
+		elseif(!empty($object->ref))$ref = $object->ref;
+			
+		
+		
+		return $ref;
+	}
+	
+	static function getRef($fk_object, $type_object) {
+		global $db;
+		
+		$object_name = ucfirst($type_object);
+		if(class_exists($object_name)) {
+			
+			$object=new $object_name($db);
+			if($object->fetch($fk_object)>0) {
+				return TTwiiit::getRefByObject($object);
+			}
+		}
+		
+		
+		return '';
+		
+	}
+	
+	static function getLinkFor(&$Tab, $fk_object=0, $element ='',$tag='', $level = 1) {
+		global $db;
+		
+		
+		if($level > 5 || strlen($tag)<=1) return false;
+		
+		$res = $db->query("SELECT fk_object, type_object, comment 
+				FROM ".MAIN_DB_PREFIX."twiiit WHERE 
+				(fk_object = ".(int)$fk_object." AND type_object='".$db->escape($element)."')
+				OR comment LIKE '%".$db->escape($tag)."%'");
+		while($obj = $db->fetch_object($res)) {
+			
+			$TTag = TTwiiit::extractTags($obj->comment, array('/@(\\w+)/','/#(\\w+)/' ));
+			if($obj->fk_object>0 && !empty($obj->type_object)) $TTag[] = TTwiiit::getTag($element, TTwiiit::getRef($obj->fk_object, $obj->type_object));
+			
+			$TTagRel = TTwiiit::extractTags($obj->comment, array( '/:(\\w+)/' ));
+			if(empty($TTagRel))$TTagRel=array(' ');
+			//var_dump($tag,$TTag,$TTagRel);
+			foreach($TTag as $t) {
+				if($tag == $t || strlen($tag)<=1) continue;
+				
+				foreach($TTagRel as $rel) {
+					
+					if(empty($rel)) continue;
+					
+					$checksum = md5( $tag.'.'.$t.'.'.$rel ) ;
+					
+					if(!isset($Tab[$checksum])) {
+						$Tab[$checksum] = array(
+							'from'=>$tag
+							,'to'=>$t
+							,'label'=>$rel
+						);
+						
+						TTwiiit::getLinkFor($Tab, 0, '',$t, $level+1);
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
 	static function getTag($element, $ref) {
 		$element_tag='';
 		if($element == 'user' || $element =='company' || $element =='societe' || $element == 'contact') {

@@ -27,6 +27,12 @@
 			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'));
 			
 			break;
+		case 'graph':
+			
+			__out(_graph(GETPOST('id'),GETPOST('ref'), GETPOST('element')),'json');
+			
+			break;
+			
 	}
 
 	switch ($put) {
@@ -36,6 +42,13 @@
 			
 			break;
 	}
+
+function _graph($fk_object,$ref,$element) {
+	$TLink=array();
+	TTwiiit::getLinkFor($TLink,$fk_object, $element, TTwiiit::getTag($element, $ref) );
+	
+	return $TLink;
+}
 
 function _comment($fk_object,$ref,$element,$comment) {
 	$PDOdb=new TPDOdb;
