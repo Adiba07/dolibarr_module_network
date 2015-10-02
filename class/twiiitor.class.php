@@ -5,41 +5,42 @@ class TTwiiit extends TObjetStd{
  * Ordre de fabrication d'équipement
  * */
  	function __construct() {
+ 		global $user;
+		
 		$this->set_table(MAIN_DB_PREFIX.'twiiit');
 	  
-		$this->add_champs('fk_object',array('type'=>'int', 'index'=>true));
-		$this->add_champs('type_object',array('type'=>'string', 'index'=>true));
-		$this->add_champs('comment',array('type'=>'text'));
+		$this->add_champs('fk_object,fk_user',array('type'=>'int', 'index'=>true));
+		$this->add_champs('type_object,ref',array('type'=>'string', 'index'=>true, 'length'=>50));
+		$this->add_champs('comment',array('type'=>'string', 'index'=>true, 'length'=>140));
 		
 		$this->start();
 		
-		$this->setChild('TTwiiitTag','fk_twiiit');
+		//$this->setChild('TTwiiitTag','fk_twiiit');
+		
+		$this->fk_user = $user->id;
+		
 	}
 	
 	function save(&$PDOdb) {
 		
-		$this->set_tags('/(^|\s)@(\w*)/');
+		/*$this->set_tags('/(^|\s)@(\w*)/');
 		$this->set_tags('/(^|\s):(\w*)/');
 		$this->set_tags('/(^|\s)#(\w*)/');
-		
+		*/
+		//$PDOdb->debug=true;
 		parent::save($PDOdb);
 	}
 	
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace_callback(
-	        '/(^|\s)@(\w*)/',
-	        function ($matches) {
-	            return '<a href="'.dol_buildpath('/twiiitor/go.php',1).'?tag='.$matches[0].'" class="twiiit-login">'.$matches[0].'</a>';
-	        },
-	        $comm
-	    );
-		
+		 $comm = preg_replace('/@(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/#(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/:(\\w+)/','<a href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
 	}
-	
+	/*
 	function set_tags($pattern) {
 		$TTag = array();
 		//print $this->comment.' '.$pattern.'<br>';
@@ -70,12 +71,11 @@ class TTwiiit extends TObjetStd{
 		}
 		
 	}
-	
+	*/
 }
-class TTwiiitTag extends TObjetStd{
+
 /*
- * Ordre de fabrication d'équipement
- * */
+class TTwiiitTag extends TObjetStd{
  	function __construct() {
 		$this->set_table(MAIN_DB_PREFIX.'twiiit_tag');
 	  
@@ -87,4 +87,4 @@ class TTwiiitTag extends TObjetStd{
 		
 	}
 	
-}
+}*/

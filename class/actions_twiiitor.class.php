@@ -69,6 +69,7 @@ class Actionstwiiitor
 		define('TWIIITOR_ADDED',true);
 		
 		if($object->element == 'societe' && !empty($object->code_client)) $ref = $object->code_client;
+		if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
 		elseif(!empty($object->ref))$ref = $object->ref;
 		
 		if(empty($ref)) return 0;

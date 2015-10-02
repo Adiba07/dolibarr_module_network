@@ -20,3 +20,8 @@
 	
 	border-radius: 3px;
 }
+#twittor-panel div.comm div.date {
+	font-size:9px;
+	color:#a5a5a5;
+	text-align: right;
+}
