@@ -12,6 +12,16 @@
 			__out(_search_user(GETPOST('q')),'json');
 						
 			break;
+		case 'search-tag':
+			
+			__out(_search_tag(GETPOST('q')),'json');
+						
+			break;
+		case 'search-element':
+			
+			__out(_search_element(GETPOST('q')),'json');
+						
+			break;
 		case 'comments':
 			
 			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'));
@@ -53,13 +63,7 @@ function _comment($fk_object,$ref,$element,$comment) {
 
 function _comments($id,$ref, $element) {
 	
-	if($element == 'user' || $element =='company' || $element =='societe' || $element == 'contact') {
-		$element_tag = '@';
-	}
-	else {
-		$element_tag = '#';
-	}
-	$element_tag.=$ref;
+	$element_tag = TTwiiit::getTag($element, $ref);
 	
 	$PDOdb=new TPDOdb;
 	$r='';
@@ -79,24 +83,57 @@ function _comments($id,$ref, $element) {
 	return $r;
 }
 
-function _search_user($name) {
+function _search_tag($tag) {
+	global $db;
+	$Tab = array();
+	
+	$reg = '/:(\\w+)/';
+	
+	$res = $db->query("SELECT LOWER(comment) as comment FROM ".MAIN_DB_PREFIX."twiiit
+	 WHERE comment LIKE '%:".$db->escape($tag)."_%'");
+	// var_dump($db);
+	while($obj = $db->fetch_object($res)) {
+		
+		preg_match_all($reg, $obj->comment, $match);
+		foreach($match[1] as &$m) {
+			$Tab[md5($m)] = $m;	
+		}
+		
+	}
+	
+	
+	natsort($Tab);
+	
+	return $Tab;
+}
+
+function _search_element($tag) {
+	
+}
+
+function _search_user($tag) {
 	global $db;
 	
 	$Tab = array();
 	
-	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($name)."%'");
+	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($tag)."%'");
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = $obj->login;
+		$Tab[] = trim($obj->login);
 	}
 	
-	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($name)."%'");
+	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = $obj->nom;
+		$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
-	$res = $db->query("SELECT CONCAT(lastname,' ',firstname) as nom FROM ".MAIN_DB_PREFIX."socpeople WHERE firstname LIKE '".$db->escape($name)."%' OR lastname LIKE '".$db->escape($name)."%'");
+	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
+						LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
+				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%'");
+				
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = $obj->nom;
+		
+			$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
+		
 	}
 	
 	natsort($Tab);

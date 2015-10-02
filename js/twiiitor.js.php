@@ -1,13 +1,16 @@
 <?php
 
 	require('../config.php');
+	dol_include_once('/twiiitor/class/twiiitor.class.php');
+
+	$element_tag = TTwiiit::getTag(GETPOST('element'), GETPOST('ref'));
 
 ?>
 var cache = [];
 
 $(document).ready(function() {
 	
-	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> #<?php echo GETPOST('ref') ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/twiiitor/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
+	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/twiiitor/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
 	$div.attr('id','twittor-panel');
 	$div.append('<textarea name="comment"></textarea>');
 	
@@ -265,6 +268,26 @@ function setTextTag() {
 	      $.getJSON('<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>', { 
 	      		q: term
 	      		,get:"search-tag"
+	      		, element:"<?php echo GETPOST('element') ?>"
+	      		, ref:"<?php echo GETPOST('ref') ?>"
+	      		, id:<?php echo GETPOST('id') ?> 
+	      	})
+	        .done(function (resp) { callback(resp); })
+	        .fail(function ()     { callback([]);   });
+	    },
+	    replace: function (value) {
+	      return '$1:' + value + ' ';
+	    },
+	    cache: true
+	  }
+	  ,{ // mention strategy
+	    match: /(^|\s)#(\w*)$/,
+	    search: function (term, callback) {
+	    	
+	      //callback(cache[term], true);
+	      $.getJSON('<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>', { 
+	      		q: term
+	      		,get:"search-element"
 	      		, element:"<?php echo GETPOST('element') ?>"
 	      		, ref:"<?php echo GETPOST('ref') ?>"
 	      		, id:<?php echo GETPOST('id') ?> 

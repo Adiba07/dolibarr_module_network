@@ -69,7 +69,15 @@ class Actionstwiiitor
 		define('TWIIITOR_ADDED',true);
 		
 		if($object->element == 'societe' && !empty($object->code_client)) $ref = $object->code_client;
-		if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
+		else if($object->element == 'societe' ) $ref = $object->name;
+		else if($object->element == 'contact' ) {
+			global $db;
+			$soc=new Societe($db);
+			$soc->fetch($object->socid);
+			$ref = trim( (!empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'_'.$object->lastname);
+			
+		}
+		else if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
 		elseif(!empty($object->ref))$ref = $object->ref;
 		
 		if(empty($ref)) return 0;

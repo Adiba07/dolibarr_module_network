@@ -18,6 +18,4 @@ $PDOdb=new TPDOdb;
 $o=new TTwiiit($db);
 $o->init_db_by_vars($PDOdb);
 
-$o=new TTwiiitTag($db);
-$o->init_db_by_vars($PDOdb);
 

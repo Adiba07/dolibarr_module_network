@@ -40,6 +40,20 @@ class TTwiiit extends TObjetStd{
 		
 		 return $comm;
 	}
+	
+	static function getTag($element, $ref) {
+		$element_tag='';
+		if($element == 'user' || $element =='company' || $element =='societe' || $element == 'contact') {
+			$element_tag = '@';
+		}
+		else {
+			$element_tag = '#';
+		}
+		$element_tag.=$ref;
+		
+		return strtr($element_tag, array( ' '=> '_' ));
+	}
+	
 	/*
 	function set_tags($pattern) {
 		$TTag = array();
