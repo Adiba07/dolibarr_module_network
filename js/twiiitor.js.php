@@ -3,6 +3,8 @@
 	require('../config.php');
 	dol_include_once('/twiiitor/class/twiiitor.class.php');
 
+	$langs->load('twiiitor@twiiitor');
+
 	$element_tag = TTwiiit::getTag(GETPOST('element'), GETPOST('ref'));
 
 ?>
@@ -14,7 +16,7 @@ $(document).ready(function() {
 	$div.attr('id','twittor-panel');
 	$div.append('<textarea name="comment"></textarea>');
 	
-	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('AddComment') ?>">');
+	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
 	$button.click(function() {
 		
 		var comment = $('#twittor-panel textarea[name=comment]').val();
