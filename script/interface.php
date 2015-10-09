@@ -93,7 +93,7 @@ function _comments($id,$ref, $element) {
 		
 		if($id!=$twiiit->fk_object || $element!=$twiiit->type_object) {
 			$origin_element = $twiiit->getNomUrl();
-			if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div>';	
+			if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div> ';	
 		}
 		
 		
