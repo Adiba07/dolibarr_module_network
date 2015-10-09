@@ -25,9 +25,15 @@
 	color:#a5a5a5;
 	text-align: right;
 }
+#twittor-panel div.comm div.object  {
+	display:inline;
+	margin-right:5px;
+	background: #4963ff;
+	border-radius: 3px;
+	padding:1px 3px;
+}
 #twittor-panel div.comm div.object a {
-	color:green;
-	
+	color:#fff;	
 }
 
 #twittor-panel div.comm a.user {
