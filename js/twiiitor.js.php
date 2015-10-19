@@ -2,6 +2,8 @@
 
 	require('../config.php');
 	dol_include_once('/twiiitor/class/twiiitor.class.php');
+	
+	if(empty($user->rights->twiiitor->read)) exit; // pas les droit de lecture
 
 	$langs->load('twiiitor@twiiitor');
 
@@ -14,8 +16,13 @@ $(document).ready(function() {
 	
 	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/twiiitor/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
 	$div.attr('id','twittor-panel');
-	$div.append('<textarea name="comment"></textarea>');
+	<?php
 	
+	if(!empty($user->rights->twiiitor->write)) {
+		
+	?>
+	
+	$div.append('<textarea name="comment"></textarea>');
 	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
 	$button.click(function() {
 		
@@ -42,6 +49,12 @@ $(document).ready(function() {
 	});
 	
 	$div.append($button);
+	
+	<?php
+	}
+	
+	?>
+	
 	$div.append('<div class="comments"></div>');
 	
 	$('#id-right').after($div);
@@ -98,25 +111,18 @@ function showSociogram() {
 
 	getEdge("<?php echo GETPOST('ref') ?>", "<?php echo GETPOST('element') ?>", <?php echo GETPOST('id') ?>);
 
-    // add some nodes to the graph and watch it go...
-    /*sys.addEdge('@Alexis','@Bob',{label:'cousin'});
-    sys.addEdge('#BobConsulting','@Bob',{label:'dirigeant'});
-    sys.addEdge('#BobConsulting','@Marie',{label:'commerciale'});
-    sys.addEdge('@Alexis','@Marie',{label:'maîtresse'});
-    sys.addEdge('@Alexis','#ATM',{label:'dirigeant'});
-    sys.addEdge('@Maxime','#ATM',{label:'dirigeant'});
-    sys.addEdge('@Maxime','@Alexis',{label:'associé'});
-    sys.addEdge('@Alexis','@Dapné',{label:'marié'});
-    sys.addEdge('@Robert','@Dapné',{label:'amant'});
-    */
-	
-	
 }
 
 var Renderer = function(canvas){
     var canvas = $(canvas).get(0)
     var ctx = canvas.getContext("2d");
     var particleSystem
+
+	var imgUser = new Image;
+	imgUser.src = "<?php echo dol_buildpath("/twiiitor/img/user.png",1) ?>";
+
+	var imgDoc = new Image;
+	imgDoc.src = "<?php echo dol_buildpath("/twiiitor/img/doc.png",1) ?>";
 
     var that = {
       init:function(system){
@@ -150,8 +156,12 @@ var Renderer = function(canvas){
           
 
           ctx.beginPath();
-          ctx.moveTo(pt1.x, pt1.y);
-          ctx.lineTo(pt2.x, pt2.y);
+          //ctx.moveTo(pt1.x, pt1.y);
+          //
+          
+          ctx.moveTo( pt1.x + ( Math.sign( pt2.x - pt1.x ) * 10 ), pt1.y + (Math.sign(pt2.y - pt1.y)  * 10) ); 
+          ctx.lineTo(pt2.x - ( Math.sign( pt2.x - pt1.x ) * 10 ), pt2.y - (Math.sign(pt2.y - pt1.y)  * 10));
+          
           ctx.stroke();
           
           ctx.restore();
@@ -159,7 +169,7 @@ var Renderer = function(canvas){
           ctx.font = "20px Arial";
           ctx.fillStyle = "orange";
 		  ctx.textAlign = "center";
-          ctx.fillText(edge.data.label, pt1.x + ((pt2.x - pt1.x) / 2), pt1.y + ((pt2.y - pt1.y) / 2) );
+		  ctx.fillText(edge.data.label, pt1.x + ((pt2.x - pt1.x) / 2), pt1.y + ((pt2.y - pt1.y) / 2) );
           
         })
 
@@ -171,25 +181,23 @@ var Renderer = function(canvas){
 		  var w = 50;
 		  
 		  if(node.name[0] == "#") {
-			  ctx.beginPath();
-	      	  ctx.arc(pt.x, pt.y,w, 0, 2 * Math.PI, false);
-		      ctx.fillStyle = 'green';
-		      ctx.fill();
-		      ctx.lineWidth = 5;
-		      ctx.strokeStyle = '#003300';
-		      ctx.stroke();
-		      ctx.font = "30px Arial";  			
+		  	
+		  	 
+		  	  ctx.drawImage(imgDoc, pt.x -w/2, pt.y - 80);
+		  	  ctx.font = "25px Arial";  
+		  	  ctx.fillStyle = "green";			
 		  }
 		  else {
-		  	
-          	ctx.font = "20px Arial";
+		      ctx.drawImage(imgUser, pt.x -w/2, pt.y - 70);
+          	  ctx.font = "20px Arial";
+          	  ctx.fillStyle = "blue";
 		  }
 
           // draw a rectangle centered at pt
           //
           //ctx.fillStyle = (node.data.alone) ? "orange" : "black"
           //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)*/
-          ctx.fillStyle = "blue";
+          
 		  ctx.textAlign = "center";
           ctx.fillText(node.name, pt.x, pt.y);
         })    			

@@ -2,6 +2,9 @@
 
 	require('../config.php');
 	dol_include_once('/twiiitor/class/twiiitor.class.php');
+	dol_include_once('/projet/class/project.class.php');
+	dol_include_once('/product/class/product.class.php');
+	
 
 	$get = GETPOST('get');
 	$put = GETPOST('put');
@@ -151,7 +154,7 @@ function _search_user($tag) {
 		$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
-	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
+	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(s.nom,'_',p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
 						LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
 				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%'");
 				

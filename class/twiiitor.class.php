@@ -24,7 +24,10 @@ class TTwiiit extends TObjetStd{
 	function getNomUrl() {
 		global $db;
 		
-		$object_name = ucfirst($this->type_object);
+		$type= $this->type_object;
+		//if($type == 'projet') $type='project';
+		
+		$object_name = ucfirst($type);
 		if(class_exists($object_name)) {
 			
 			$o=new $object_name($db);

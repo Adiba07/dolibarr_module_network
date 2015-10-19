@@ -19,6 +19,8 @@
 	padding: 10px 3px;	
 	
 	border-radius: 3px;
+	
+	width:165px;
 }
 #twittor-panel div.comm div.date {
 	font-size:9px;
