@@ -4,7 +4,9 @@
 	dol_include_once('/twiiitor/class/twiiitor.class.php');
 	dol_include_once('/societe/class/societe.class.php');
 	dol_include_once('/contact/class/contact.class.php');
-	
+	dol_include_once('/compta/facture/class/facture.class.php');
+	dol_include_once('/comm/propal/class/propal.class.php');
+	dol_include_once('/product/class/product.class.php');
 	
 	$tag = GETPOST('tag');
 	$type_tag = GETPOST('type_tag');
@@ -52,27 +54,76 @@
 			
 				
 		}
-	
-	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
-						LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
-				WHERE p.firstname LIKE '".$db->escape($name)."%' OR p.lastname LIKE '".$db->escape($name)."%'");
+			
 				
-				
-		/*$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($name)."%'");
-		while($obj = $db->fetch_object($res)) {
-			$Tab[] = $obj->nom;
-		}
 		
-		$res = $db->query("SELECT CONCAT(lastname,' ',firstname) as nom FROM ".MAIN_DB_PREFIX."socpeople WHERE firstname LIKE '".$db->escape($name)."%' OR lastname LIKE '".$db->escape($name)."%'");
-		while($obj = $db->fetch_object($res)) {
-			$Tab[] = $obj->nom;
-		}*/
 		
 			
 	}
 	else if($type_tag == 'rel') {
+		
+		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."twiiit WHERE comment LIKE '%:".$db->escape($tag)."%'");
+		
+		$PDOdb=new TPDOdb;
+		while($obj = $db->fetch_object($res)) {
+					
+			$twiiit = new TTwiiit;
+			$twiiit->load($PDOdb, $obj->rowid);		
 			
-	} 
+			$Tab[] = array(
+				'link'=>$twiiit->getNomUrl()
+				,'text'=>$twiiit->getComment()
+			) ;
+		
+		}
+		
+		
+	}
+	else if($type_tag == 'hashtag') {
+		
+		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE ref = '".$db->escape($tag)."'");
+		while($obj = $db->fetch_object($res)) {
+			$o=new Propal($db);
+			$o->fetch($obj->rowid);
+			$Tab[] = array(
+				'link'=>$o->getNomUrl(1)
+				,'link0'=>$o->getNomUrl(0)
+				,'type'=>'user'
+			) ;
+			
+		}
+		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."facture WHERE facnumber = '".$db->escape($tag)."'");
+		while($obj = $db->fetch_object($res)) {
+			$o=new Facture($db);
+			$o->fetch($obj->rowid);
+			$Tab[] = array(
+				'link'=>$o->getNomUrl(1)
+				,'link0'=>$o->getNomUrl(0)
+				,'type'=>'societe'
+			) ;
+			
+				
+		}
+		
+				
+		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."product WHERE ref = '".$db->escape($tag)."'");
+		while($obj = $db->fetch_object($res)) {
+			$o=new Product($db);
+			$o->fetch($obj->rowid);
+			$Tab[] = array(
+				'link'=>$o->getNomUrl(1)
+				,'link0'=>$o->getNomUrl(0)
+				,'type'=>'societe'
+			) ;
+			
+				
+		}
+		
+				
+		
+		
+			
+	}
 	else {
 		
 	}
@@ -96,11 +147,28 @@
 		print "Aucun object ne correspond à ce tag.";		
 	}
 	else{
+		
+		print '<table class="border" width="100%">
+		<tr class="liste_titre">
+			<td class="liste_titre">'.$langs->trans('Elements').'</td>
+		</tr>
+		';
+		
+		$class= '';
 		foreach($Tab as $link) {
+			$class = ($class == 'impair') ? 'pair' : 'impair';
 			
-			print $link['link'].'<br >';
+			print '<tr class="'.$class.'"><td>';
+			
+			print $link['link'];
+			
+			if(!empty($link['text'])) print ' '. $link['text']; 
+			
+			print '</td></tr>';
 			
 		}
+		
+		print '</table>';
 		
 	}
 	
