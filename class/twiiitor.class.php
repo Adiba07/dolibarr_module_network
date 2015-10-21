@@ -58,7 +58,7 @@ class TTwiiit extends TObjetStd{
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace('/@(\\w+)/','<a class="user" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/@((\\w|-)+)/','<a class="user" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
 		 $comm = preg_replace('/#(\\w+)/','<a class="object" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
 		 $comm = preg_replace('/:(\\w+)/','<a class="rel" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
