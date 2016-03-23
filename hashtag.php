@@ -55,10 +55,6 @@
 				
 		}
 			
-				
-		
-		
-			
 	}
 	else if($type_tag == 'rel') {
 		
