@@ -17,8 +17,8 @@
  */
 
 /**
- * 	\file		admin/twiiitor.php
- * 	\ingroup	twiiitor
+ * 	\file		admin/network.php
+ * 	\ingroup	network
  * 	\brief		This file is an example module setup page
  * 				Put some comments here
  */
@@ -30,10 +30,10 @@ if (! $res) {
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once '../lib/twiiitor.lib.php';
+require_once '../lib/network.lib.php';
 
 // Translations
-$langs->load("twiiitor@twiiitor");
+$langs->load("network@network");
 
 // Access control
 if (! $user->admin) {
@@ -77,7 +77,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
 /*
  * View
  */
-$page_name = "twiiitorSetup";
+$page_name = "networkSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
@@ -86,13 +86,13 @@ $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
-$head = twiiitorAdminPrepareHead();
+$head = networkAdminPrepareHead();
 dol_fiche_head(
     $head,
     'settings',
     $langs->trans("ModuleName"),
     0,
-    "twiiitor@twiiitor"
+    "network@network"
 );
 
 // Setup page goes here

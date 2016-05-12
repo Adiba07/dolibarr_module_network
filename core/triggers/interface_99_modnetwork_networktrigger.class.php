@@ -17,8 +17,8 @@
  */
 
 /**
- * 	\file		core/triggers/interface_99_modMyodule_twiiitortrigger.class.php
- * 	\ingroup	twiiitor
+ * 	\file		core/triggers/interface_99_modMyodule_networktrigger.class.php
+ * 	\ingroup	network
  * 	\brief		Sample trigger
  * 	\remarks	You can create other triggers by copying this one
  * 				- File name should be either:
@@ -33,7 +33,7 @@
 /**
  * Trigger class
  */
-class Interfacetwiiitortrigger
+class Interfacenetworktrigger
 {
 
     private $db;
@@ -54,7 +54,7 @@ class Interfacetwiiitortrigger
             . "They are provided for tutorial purpose only.";
         // 'development', 'experimental', 'dolibarr' or version
         $this->version = 'development';
-        $this->picto = 'twiiitor@twiiitor';
+        $this->picto = 'network@network';
     }
 
     /**

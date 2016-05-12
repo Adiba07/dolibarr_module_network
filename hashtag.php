@@ -1,7 +1,7 @@
 <?php
 
 	require('config.php');
-	dol_include_once('/twiiitor/class/twiiitor.class.php');
+	dol_include_once('/network/class/network.class.php');
 	dol_include_once('/societe/class/societe.class.php');
 	dol_include_once('/contact/class/contact.class.php');
 	dol_include_once('/compta/facture/class/facture.class.php');
@@ -58,17 +58,17 @@
 	}
 	else if($type_tag == 'rel') {
 		
-		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."twiiit WHERE comment LIKE '%:".$db->escape($tag)."%'");
+		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."netmsg WHERE comment LIKE '%:".$db->escape($tag)."%'");
 		
 		$PDOdb=new TPDOdb;
 		while($obj = $db->fetch_object($res)) {
 					
-			$twiiit = new TTwiiit;
-			$twiiit->load($PDOdb, $obj->rowid);		
+			$netmsg = new TNetMsg;
+			$netmsg->load($PDOdb, $obj->rowid);		
 			
 			$Tab[] = array(
-				'link'=>$twiiit->getNomUrl()
-				,'text'=>$twiiit->getComment()
+				'link'=>$netmsg->getNomUrl()
+				,'text'=>$netmsg->getComment()
 			) ;
 		
 		}

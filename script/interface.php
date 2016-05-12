@@ -1,7 +1,7 @@
 <?php
 
 	require('../config.php');
-	dol_include_once('/twiiitor/class/twiiitor.class.php');
+	dol_include_once('/network/class/network.class.php');
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/product/class/product.class.php');
 	
@@ -48,7 +48,7 @@
 
 function _graph($fk_object,$ref,$element) {
 	$TLink=array();
-	TTwiiit::getLinkFor($TLink,$fk_object, $element, TTwiiit::getTag($element, $ref) );
+	TNetMsg::getLinkFor($TLink,$fk_object, $element, TNetMsg::getTag($element, $ref) );
 	
 	return $TLink;
 }
@@ -56,7 +56,7 @@ function _graph($fk_object,$ref,$element) {
 function _comment($fk_object,$ref,$element,$comment) {
 	$PDOdb=new TPDOdb;
 	
-	$t=new TTwiiit;
+	$t=new TNetMsg;
 	
 	/*if($element == 'user' || $element =='company' || $element == 'contact') {
 		$element_tag = '@';
@@ -79,30 +79,30 @@ function _comment($fk_object,$ref,$element,$comment) {
 
 function _comments($id,$ref, $element) {
 	
-	$element_tag = TTwiiit::getTag($element, $ref);
+	$element_tag = TNetMsg::getTag($element, $ref);
 	
 	$PDOdb=new TPDOdb;
 	$r='';
 	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
-	FROM ".MAIN_DB_PREFIX."twiiit t  
+	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE (t.fk_object=".(int)$id." AND t.type_object='".$element."') OR (t.comment LIKE '%".$element_tag."%')
 	 ORDER BY t.date_cre DESC");
 	foreach($Tab as &$row) {
 				
-		$twiiit = new TTwiiit;
-		$twiiit->load($PDOdb, $row->rowid);		
+		$netmsg = new TNetMsg;
+		$netmsg->load($PDOdb, $row->rowid);		
 		
 		$r.='<div class="comm">';
 		
-		if($id!=$twiiit->fk_object || $element!=$twiiit->type_object) {
-			$origin_element = $twiiit->getNomUrl();
+		if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
+			$origin_element = $netmsg->getNomUrl();
 			if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div> ';	
 		}
 		
 		
-		$r.=$twiiit->getComment();
+		$r.=$netmsg->getComment();
 		
-		$r.='<div class="date">'.dol_print_date($twiiit->date_cre, 'dayhourtextshort').'</div>';
+		$r.='<div class="date">'.dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>';
 		
 		$r.='</div>';
 		
@@ -117,7 +117,7 @@ function _search_tag($tag) {
 	
 	$reg = '/:(\\w+)/';
 	
-	$res = $db->query("SELECT LOWER(comment) as comment FROM ".MAIN_DB_PREFIX."twiiit
+	$res = $db->query("SELECT LOWER(comment) as comment FROM ".MAIN_DB_PREFIX."netmsg
 	 WHERE comment LIKE '%:".$db->escape($tag)."_%' LIMIT 100");
 	// var_dump($db);
 	while($obj = $db->fetch_object($res)) {

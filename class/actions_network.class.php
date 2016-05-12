@@ -17,16 +17,16 @@
  */
 
 /**
- * \file    class/actions_twiiitor.class.php
- * \ingroup twiiitor
+ * \file    class/actions_network.class.php
+ * \ingroup network
  * \brief   This file is an example hook overload class file
  *          Put some comments here
  */
 
 /**
- * Class Actionstwiiitor
+ * Class Actionsnetwork
  */
-class Actionstwiiitor
+class Actionsnetwork
 {
 	/**
 	 * @var array Hook results. Propagated to $hookmanager->resArray for later reuse
@@ -69,15 +69,15 @@ class Actionstwiiitor
 		define('TWIIITOR_ADDED',true);
 		
 		define('INC_FROM_DOLIBARR', true);
-		dol_include_once('/twiiitor/config.php');
-		dol_include_once('/twiiitor/class/twiiitor.class.php');
+		dol_include_once('/network/config.php');
+		dol_include_once('/network/class/network.class.php');
 		
-		$ref = TTwiiit::getRefByObject($object);
+		$ref = TNetMsg::getRefByObject($object);
 		
 		if(empty($ref)) return 0;
 		
 		?>
-		<script type="text/javascript" src="<?php echo dol_buildpath('/twiiitor/js/twiiitor.js.php?element='.$object->element.'&id='.$object->id.'&ref='.$ref,1) ?>"></script>
+		<script type="text/javascript" src="<?php echo dol_buildpath('/network/js/network.js.php?element='.$object->element.'&id='.$object->id.'&ref='.$ref,1) ?>"></script>
 		<?php	
 		
 	}	

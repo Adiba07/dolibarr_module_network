@@ -1,24 +1,24 @@
 <?php
 
 	require('../config.php');
-	dol_include_once('/twiiitor/class/twiiitor.class.php');
+	dol_include_once('/network/class/network.class.php');
 	
-	if(empty($user->rights->twiiitor->read)) exit; // pas les droit de lecture
+	if(empty($user->rights->network->read)) exit; // pas les droit de lecture
 
-	$langs->load('twiiitor@twiiitor');
+	$langs->load('network@network');
 
-	$element_tag = TTwiiit::getTag(GETPOST('element'), GETPOST('ref'));
+	$element_tag = TNetMsg::getTag(GETPOST('element'), GETPOST('ref'));
 
 ?>
 var cache = [];
 
 $(document).ready(function() {
 	
-	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/twiiitor/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
+	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
 	$div.attr('id','twittor-panel');
 	<?php
 	
-	if(!empty($user->rights->twiiitor->write)) {
+	if(!empty($user->rights->network->write)) {
 		
 	?>
 	
@@ -31,7 +31,7 @@ $(document).ready(function() {
 		if(comment.trim() == '') return false;
 		
 		$.ajax({
-			url : '<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>'
+			url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
 			,data:{ 
 		      		put:"comment"
 		      		,comment:comment
@@ -41,7 +41,7 @@ $(document).ready(function() {
 		     }
 		     ,method:'post'
 		}).done(function (data) { 
-			TwiiitorLoadComment(); 
+			NetworkLoadComment(); 
 			$('#twittor-panel textarea[name=comment]').val("");
 		});
 			
@@ -59,7 +59,7 @@ $(document).ready(function() {
 	
 	$('#id-right').after($div);
 	
-	TwiiitorLoadComment();
+	NetworkLoadComment();
 	
 	setTextTag();
 	
@@ -68,7 +68,7 @@ var sysArbor = null;
 function getEdge(ref, element, id) {
 	
 	$.ajax({
-		url : '<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>'
+		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
 		,data:{ 
 	      		get:"graph"
 	      		, element:element
@@ -119,10 +119,10 @@ var Renderer = function(canvas){
     var particleSystem
 
 	var imgUser = new Image;
-	imgUser.src = "<?php echo dol_buildpath("/twiiitor/img/user.png",1) ?>";
+	imgUser.src = "<?php echo dol_buildpath("/network/img/user.png",1) ?>";
 
 	var imgDoc = new Image;
-	imgDoc.src = "<?php echo dol_buildpath("/twiiitor/img/doc.png",1) ?>";
+	imgDoc.src = "<?php echo dol_buildpath("/network/img/doc.png",1) ?>";
 
     var that = {
       init:function(system){
@@ -259,10 +259,10 @@ var Renderer = function(canvas){
   }    
 
 
-function TwiiitorLoadComment() {
+function NetworkLoadComment() {
 	
 	$.ajax({
-		url : '<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>'
+		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
 		,data:{ 
 	      		get:"comments"
 	      		, element:"<?php echo GETPOST('element') ?>"
@@ -284,7 +284,7 @@ function setTextTag() {
 	    search: function (term, callback) {
 	    	
 	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>', { 
+	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
 	      		q: term
 	      		,get:"search-user"
 	      		, element:"<?php echo GETPOST('element') ?>"
@@ -304,7 +304,7 @@ function setTextTag() {
 	    search: function (term, callback) {
 	    	
 	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>', { 
+	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
 	      		q: term
 	      		,get:"search-tag"
 	      		, element:"<?php echo GETPOST('element') ?>"
@@ -324,7 +324,7 @@ function setTextTag() {
 	    search: function (term, callback) {
 	    	
 	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/twiiitor/script/interface.php',1) ?>', { 
+	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
 	      		q: term
 	      		,get:"search-element"
 	      		, element:"<?php echo GETPOST('element') ?>"

@@ -1,13 +1,13 @@
 <?php
 
-class TTwiiit extends TObjetStd{
+class TNetMsg extends TObjetStd{
 /*
  * Ordre de fabrication d'équipement
  * */
  	function __construct() {
  		global $user;
 		
-		$this->set_table(MAIN_DB_PREFIX.'twiiit');
+		$this->set_table(MAIN_DB_PREFIX.'netmsg');
 	  
 		$this->add_champs('fk_object,fk_user',array('type'=>'int', 'index'=>true));
 		$this->add_champs('type_object,ref',array('type'=>'string', 'index'=>true, 'length'=>50));
@@ -15,7 +15,7 @@ class TTwiiit extends TObjetStd{
 		
 		$this->start();
 		
-		//$this->setChild('TTwiiitTag','fk_twiiit');
+		//$this->setChild('TNetMsgTag','fk_netmsg');
 		
 		$this->fk_user = $user->id;
 		
@@ -58,9 +58,9 @@ class TTwiiit extends TObjetStd{
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace('/@((\\w|-)+)/','<a class="user" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/#(\\w+)/','<a class="object" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/:(\\w+)/','<a class="rel" href="'.dol_buildpath('/twiiitor/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/@((\\w|-)+)/','<a class="user" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/#(\\w+)/','<a class="object" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
+		 $comm = preg_replace('/:(\\w+)/','<a class="rel" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
 	}
@@ -109,7 +109,7 @@ class TTwiiit extends TObjetStd{
 			
 			$object=new $object_name($db);
 			if($object->fetch($fk_object)>0) {
-				return TTwiiit::getRefByObject($object);
+				return TNetMsg::getRefByObject($object);
 			}
 		}
 		
@@ -125,15 +125,15 @@ class TTwiiit extends TObjetStd{
 		if($level > 5 || strlen($tag)<=1) return false;
 		
 		$res = $db->query("SELECT fk_object, type_object, comment 
-				FROM ".MAIN_DB_PREFIX."twiiit WHERE 
+				FROM ".MAIN_DB_PREFIX."netmsg WHERE 
 				(fk_object = ".(int)$fk_object." AND type_object='".$db->escape($element)."')
 				OR comment LIKE '%".$db->escape($tag)."%'");
 		while($obj = $db->fetch_object($res)) {
 			
-			$TTag = TTwiiit::extractTags($obj->comment, array('/@(\\w+)/','/#(\\w+)/' ));
-			if($obj->fk_object>0 && !empty($obj->type_object)) $TTag[] = TTwiiit::getTag($element, TTwiiit::getRef($obj->fk_object, $obj->type_object));
+			$TTag = TNetMsg::extractTags($obj->comment, array('/@(\\w+)/','/#(\\w+)/' ));
+			if($obj->fk_object>0 && !empty($obj->type_object)) $TTag[] = TNetMsg::getTag($element, TNetMsg::getRef($obj->fk_object, $obj->type_object));
 			
-			$TTagRel = TTwiiit::extractTags($obj->comment, array( '/:(\\w+)/' ));
+			$TTagRel = TNetMsg::extractTags($obj->comment, array( '/:(\\w+)/' ));
 			if(empty($TTagRel))$TTagRel=array(' ');
 			//var_dump($tag,$TTag,$TTagRel);
 			foreach($TTag as $t) {
@@ -152,7 +152,7 @@ class TTwiiit extends TObjetStd{
 							,'label'=>$rel
 						);
 						
-						TTwiiit::getLinkFor($Tab, 0, '',$t, $level+1);
+						TNetMsg::getLinkFor($Tab, 0, '',$t, $level+1);
 					}
 					
 				}
@@ -189,7 +189,7 @@ class TTwiiit extends TObjetStd{
 			
 			foreach($TTag[0] as $tag) {
 				$found=false;
-				foreach($this->TTwiiitTag as &$t) {
+				foreach($this->TNetMsgTag as &$t) {
 					if($t->tag === $tag) {
 						$found = true;
 						break;
@@ -198,8 +198,8 @@ class TTwiiit extends TObjetStd{
 				}
 				
 				if(!$found) {
-					$k = $this->addChild($PDOdb, 'TTwiiitTag');
-					$this->TTwiiitTag[$k]->tag = $tag;
+					$k = $this->addChild($PDOdb, 'TNetMsgTag');
+					$this->TNetMsgTag[$k]->tag = $tag;
 				}
 				
 			}
@@ -211,11 +211,11 @@ class TTwiiit extends TObjetStd{
 }
 
 /*
-class TTwiiitTag extends TObjetStd{
+class TNetMsgTag extends TObjetStd{
  	function __construct() {
-		$this->set_table(MAIN_DB_PREFIX.'twiiit_tag');
+		$this->set_table(MAIN_DB_PREFIX.'netmsg_tag');
 	  
-		$this->add_champs('fk_twiiit,fk_object',array('type'=>'int', 'index'=>true));
+		$this->add_champs('fk_netmsg,fk_object',array('type'=>'int', 'index'=>true));
 		$this->add_champs('type_object,tag',array('type'=>'string', 'index'=>true));
 		
 		$this->start();

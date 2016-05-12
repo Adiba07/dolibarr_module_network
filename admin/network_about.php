@@ -18,7 +18,7 @@
 
 /**
  * 	\file		admin/about.php
- * 	\ingroup	twiiitor
+ * 	\ingroup	network
  * 	\brief		This file is an example about page
  * 				Put some comments here
  */
@@ -30,10 +30,10 @@ if (! $res) {
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once '../lib/twiiitor.lib.php';
+require_once '../lib/network.lib.php';
 
 // Translations
-$langs->load("twiiitor@twiiitor");
+$langs->load("network@network");
 
 // Access control
 if (! $user->admin) {
@@ -43,7 +43,7 @@ if (! $user->admin) {
 /*
  * View
  */
-$page_name = "twiiitorAbout";
+$page_name = "networkAbout";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
@@ -52,13 +52,13 @@ $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
-$head = twiiitorAdminPrepareHead();
+$head = networkAdminPrepareHead();
 dol_fiche_head(
     $head,
     'about',
     $langs->trans("ModuleName"),
     0,
-    'twiiitor@twiiitor'
+    'network@network'
 );
 
 // About page goes here

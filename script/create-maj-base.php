@@ -11,11 +11,11 @@ if(!defined('INC_FROM_DOLIBARR')) {
 }
 
 
-dol_include_once('/twiiitor/class/twiiitor.class.php');
+dol_include_once('/network/class/network.class.php');
 
 $PDOdb=new TPDOdb;
 
-$o=new TTwiiit($db);
+$o=new TNetMsg($db);
 $o->init_db_by_vars($PDOdb);
 
 

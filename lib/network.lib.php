@@ -17,26 +17,26 @@
  */
 
 /**
- *	\file		lib/twiiitor.lib.php
- *	\ingroup	twiiitor
+ *	\file		lib/network.lib.php
+ *	\ingroup	network
  *	\brief		This file is an example module library
  *				Put some comments here
  */
 
-function twiiitorAdminPrepareHead()
+function networkAdminPrepareHead()
 {
     global $langs, $conf;
 
-    $langs->load("twiiitor@twiiitor");
+    $langs->load("network@network");
 
     $h = 0;
     $head = array();
 
-    $head[$h][0] = dol_buildpath("/twiiitor/admin/twiiitor_setup.php", 1);
+    $head[$h][0] = dol_buildpath("/network/admin/network_setup.php", 1);
     $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'settings';
     $h++;
-    $head[$h][0] = dol_buildpath("/twiiitor/admin/twiiitor_about.php", 1);
+    $head[$h][0] = dol_buildpath("/network/admin/network_about.php", 1);
     $head[$h][1] = $langs->trans("About");
     $head[$h][2] = 'about';
     $h++;
@@ -44,12 +44,12 @@ function twiiitorAdminPrepareHead()
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     //$this->tabs = array(
-    //	'entity:+tabname:Title:@twiiitor:/twiiitor/mypage.php?id=__ID__'
+    //	'entity:+tabname:Title:@network:/network/mypage.php?id=__ID__'
     //); // to add new tab
     //$this->tabs = array(
-    //	'entity:-tabname:Title:@twiiitor:/twiiitor/mypage.php?id=__ID__'
+    //	'entity:-tabname:Title:@network:/network/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'twiiitor');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'network');
 
     return $head;
 }
