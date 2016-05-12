@@ -36,12 +36,19 @@
 	
 	
 }
+#twittor-panel div.comm:nth-child(odd) {
+	background-color: #eee;
+}
 #twittor-panel div.comm div.date {
 	font-size:9px;
 	color:#a5a5a5;
 	text-align: right;
 	float:right;
 }
+#twittor-panel div.comm div.delete {
+	float:right;
+}
+
 #twittor-panel div.comm div.object  {
 	display:inline;
 	margin-right:5px;

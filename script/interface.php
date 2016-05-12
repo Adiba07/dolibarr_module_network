@@ -44,7 +44,27 @@
 			print _comment(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('comment'));
 			
 			break;
+			
+		case 'remove-comment':
+			
+			print _removeComment(GETPOST('id'));
+			
+			break;
+			
 	}
+
+function _removeComment($id) {
+	
+	$PDOdb=new TPDOdb;
+	$t=new TNetMsg;
+	if($t->load($PDOdb, $id)) {
+		$t->delete($PDOdb);
+		return 'ok';
+	}
+	
+	
+	return 'ko';
+}
 
 function _graph($fk_object,$ref,$element) {
 	$TLink=array();
@@ -84,6 +104,7 @@ function _comment($fk_object,$ref,$element,$comment) {
 }
 
 function _comments($id,$ref, $element) {
+	global $user;
 	
 	$element_tag = TNetMsg::getTag($element, $ref);
 	
@@ -98,7 +119,7 @@ function _comments($id,$ref, $element) {
 		$netmsg = new TNetMsg;
 		$netmsg->load($PDOdb, $row->rowid);		
 		
-		$r.='<div class="comm">';
+		$r.='<div class="comm" commid="'.$netmsg->getId().'">';
 		
 		if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
 			$origin_element = $netmsg->getNomUrl();
@@ -108,6 +129,9 @@ function _comments($id,$ref, $element) {
 		
 		$r.=$netmsg->getComment();
 		
+		if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
+			 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>';
+		}
 		$r.='<div class="date">'.dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>';
 		
 		$r.='</div>';

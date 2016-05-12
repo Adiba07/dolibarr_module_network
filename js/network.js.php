@@ -287,6 +287,23 @@ function NetworkLoadComment() {
 	
 }
 
+function networkRemoveComment(commid) {
+	if(window.confirm("Etes-vous sûr ?")) {
+		$.ajax({
+		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
+		,data:{ 
+	      		put:"remove-comment"
+	      		, id:commid
+	     }	
+		}).done(function (data) { 
+			$('div.comments div.comm[commid='+commid+']').remove();	
+		});
+		
+		
+		
+	}	
+}
+
 function setTextTag() {
 	
 	$('#twittor-panel input[name=comment]').textcomplete([
