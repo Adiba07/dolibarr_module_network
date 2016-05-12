@@ -118,7 +118,7 @@ function _search_tag($tag) {
 	$reg = '/:(\\w+)/';
 	
 	$res = $db->query("SELECT LOWER(comment) as comment FROM ".MAIN_DB_PREFIX."twiiit
-	 WHERE comment LIKE '%:".$db->escape($tag)."_%'");
+	 WHERE comment LIKE '%:".$db->escape($tag)."_%' LIMIT 100");
 	// var_dump($db);
 	while($obj = $db->fetch_object($res)) {
 		
@@ -144,19 +144,19 @@ function _search_user($tag) {
 	
 	$Tab = array();
 	
-	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($tag)."%'");
+	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($tag)."%' LIMIT 20");
 	while($obj = $db->fetch_object($res)) {
 		$Tab[] = trim($obj->login);
 	}
 	
-	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
+	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 20");
 	while($obj = $db->fetch_object($res)) {
 		$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
 	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(s.nom,'_',p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
 						LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
-				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%'");
+				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%' LIMIT 20");
 				
 	while($obj = $db->fetch_object($res)) {
 		
