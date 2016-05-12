@@ -150,6 +150,20 @@ function _search_element($tag) {
 		$Tab[] = trim($obj->label);
 	}
 	
+	$res = $db->query("SELECT ref as label FROM ".MAIN_DB_PREFIX."propal WHERE ref LIKE '".$db->escape($tag)."%' LIMIT 10");
+	while($obj = $db->fetch_object($res)) {
+		$Tab[] = trim($obj->label);
+	}
+	
+	$res = $db->query("SELECT facnumber as label FROM ".MAIN_DB_PREFIX."facture WHERE facnumber LIKE '".$db->escape($tag)."%' LIMIT 10");
+	while($obj = $db->fetch_object($res)) {
+		$Tab[] = trim($obj->label);
+	}
+	
+	$res = $db->query("SELECT CONCAT(ref,' ',title) as label FROM ".MAIN_DB_PREFIX."projet WHERE ref LIKE '".$db->escape($tag)."%' LIMIT 10");
+	while($obj = $db->fetch_object($res)) {
+		$Tab[] = trim($obj->label);
+	}
 	
 	natsort($Tab);
 	

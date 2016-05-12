@@ -7,6 +7,7 @@
 	dol_include_once('/compta/facture/class/facture.class.php');
 	dol_include_once('/comm/propal/class/propal.class.php');
 	dol_include_once('/product/class/product.class.php');
+	dol_include_once('/projet/class/project.class.php');
 	
 	$tag = GETPOST('tag');
 	$type_tag = GETPOST('type_tag');
@@ -105,6 +106,19 @@
 		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."product WHERE ref = '".$db->escape($tag)."'");
 		while($obj = $db->fetch_object($res)) {
 			$o=new Product($db);
+			$o->fetch($obj->rowid);
+			$Tab[] = array(
+				'link'=>$o->getNomUrl(1)
+				,'link0'=>$o->getNomUrl(0)
+				,'type'=>'societe'
+			) ;
+			
+				
+		}
+		
+		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."projet WHERE ref LIKE '".$db->escape($tag)."%'");
+		while($obj = $db->fetch_object($res)) {
+			$o=new Project($db);
 			$o->fetch($obj->rowid);
 			$Tab[] = array(
 				'link'=>$o->getNomUrl(1)
