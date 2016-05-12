@@ -69,6 +69,12 @@ function _comment($fk_object,$ref,$element,$comment) {
 	
 	$element_tag.=$ref;
 	*/
+	$reg = '/:[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]*/i';
+	$comment = preg_replace_callback($reg, function($matches) {
+		var_dump(dol_string_unaccent($matches[0]));
+		return strtolower(dol_string_unaccent($matches[0]));
+	}, $comment);
+	
 	$t->fk_object = $fk_object;
 	$t->comment = $comment;
 	$t->type_object = $element;
@@ -118,13 +124,13 @@ function _search_tag($tag) {
 	$reg = '/:(\\w+)/';
 	
 	$res = $db->query("SELECT LOWER(comment) as comment FROM ".MAIN_DB_PREFIX."netmsg
-	 WHERE comment LIKE '%:".$db->escape($tag)."_%' LIMIT 100");
+	 WHERE comment LIKE '%:".$db->escape($tag)."_%' LIMIT 10");
 	// var_dump($db);
 	while($obj = $db->fetch_object($res)) {
 		
 		preg_match_all($reg, $obj->comment, $match);
 		foreach($match[1] as &$m) {
-			$Tab[md5($m)] = $m;	
+			$Tab[md5($m)] = dol_string_unaccent($m);	
 		}
 		
 	}
@@ -136,7 +142,18 @@ function _search_tag($tag) {
 }
 
 function _search_element($tag) {
+	global $db;
 	
+	$Tab = array();
+	$res = $db->query("SELECT CONCAT(ref,' ',label) as label FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$db->escape($tag)."%' OR label LIKE '%".$db->escape($tag)."%' LIMIT 10");
+	while($obj = $db->fetch_object($res)) {
+		$Tab[] = trim($obj->label);
+	}
+	
+	
+	natsort($Tab);
+	
+	return $Tab;
 }
 
 function _search_user($tag) {
@@ -144,19 +161,19 @@ function _search_user($tag) {
 	
 	$Tab = array();
 	
-	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($tag)."%' LIMIT 20");
+	$res = $db->query("SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login LIKE '".$db->escape($tag)."%' LIMIT 10");
 	while($obj = $db->fetch_object($res)) {
 		$Tab[] = trim($obj->login);
 	}
 	
-	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 20");
+	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
 	while($obj = $db->fetch_object($res)) {
 		$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
 	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(s.nom,'_',p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
 						LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
-				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%' LIMIT 20");
+				WHERE p.firstname LIKE '".$db->escape($tag)."%' OR p.lastname LIKE '".$db->escape($tag)."%' LIMIT 10");
 				
 	while($obj = $db->fetch_object($res)) {
 		

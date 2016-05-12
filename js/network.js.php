@@ -14,7 +14,7 @@ var cache = [];
 
 $(document).ready(function() {
 	
-	$div = $('<div class="tabBar"><strong><?php echo $langs->trans('NanoSocial') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div>');
+	$div = $('<div class="tabBar"><div rel="header"><strong><?php echo $langs->trans('Network') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div><div rel="writer"></div></div>');
 	$div.attr('id','twittor-panel');
 	<?php
 	
@@ -22,11 +22,23 @@ $(document).ready(function() {
 		
 	?>
 	
-	$div.append('<textarea name="comment"></textarea>');
+	$writer = $div.find('[rel=writer]');
+	
+	$writer.append('<input type="text" name="comment" maxlength="140" placeholder="Saisissez une relation (140car. max.)" />');
 	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
+	$writer.find('input[name=comment]').keypress(function(e) {
+		if(e.which == 13) {
+	        addComment();
+	    }
+	});
 	$button.click(function() {
 		
-		var comment = $('#twittor-panel textarea[name=comment]').val();
+		addComment();
+		
+	});
+	
+	function addComment() {
+		var comment = $('#twittor-panel input[name=comment]').val();
 		
 		if(comment.trim() == '') return false;
 		
@@ -42,13 +54,12 @@ $(document).ready(function() {
 		     ,method:'post'
 		}).done(function (data) { 
 			NetworkLoadComment(); 
-			$('#twittor-panel textarea[name=comment]').val("");
+			$('#twittor-panel input[name=comment]').val("");
 		});
 			
-		
-	});
+	}
 	
-	$div.append($button);
+	$writer.append($button);
 	
 	<?php
 	}
@@ -57,7 +68,7 @@ $(document).ready(function() {
 	
 	$div.append('<div class="comments"></div>');
 	
-	$('#id-right').after($div);
+	$('#id-right').append($div);
 	
 	NetworkLoadComment();
 	
@@ -278,7 +289,7 @@ function NetworkLoadComment() {
 
 function setTextTag() {
 	
-	$('#twittor-panel textarea').textcomplete([
+	$('#twittor-panel input[name=comment]').textcomplete([
 	  { // mention strategy
 	    match: /(^|\s)@(\w*)$/,
 	    search: function (term, callback) {
@@ -335,7 +346,7 @@ function setTextTag() {
 	        .fail(function ()     { callback([]);   });
 	    },
 	    replace: function (value) {
-	      return '$1:' + value + ' ';
+	      return '$1#' + value + ' ';
 	    },
 	    cache: true
 	  }

@@ -104,7 +104,7 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
-
+/*
 // Example with a yes / no select
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -117,6 +117,16 @@ print '<input type="hidden" name="action" value="set_CONSTNAME">';
 print $form->selectyesno("CONSTNAME",$conf->global->CONSTNAME,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
+print '</td></tr>';
+*/
+
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>Pas de paramètre</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print 'Rendez-vous sur des fiches pour créer des liens. @ pour un tiers,contact ou utilisateur, : pour le type de relation, #pour un objet type propale, projet, etc. Ex : @Alexis est :ami @Thibaud  ';
 print '</td></tr>';
 
 print '</table>';

@@ -89,7 +89,7 @@ class modnetwork extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'hooks'=>array('globalcard')
-			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/lib/arbor.js','/network/lib/arbor/lib/arbor-tween.js')
+			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/arbor.js','/network/lib/arbor/arbor-tween.js')
 			,'css' => array('/network/lib/textcomplete/dist/jquery.textcomplete.css','/network/css/network.css')
 		);
 
@@ -180,14 +180,14 @@ class modnetwork extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Lire les infos sociales';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 						// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Ecrire les infos sociales';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)

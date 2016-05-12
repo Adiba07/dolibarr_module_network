@@ -1,31 +1,46 @@
 #twittor-panel {
-    display: table-cell;
     float: none;
-    vertical-align: top;
+    clear:both;
+    margin:10px 12px 0 20px;
 }
-
-#twittor-panel input {
-	width: 100%;
+#twittor-panel div[rel=header] {
+	float:left;
+	width:20%;
+	height:50px;
 }
-
+#twittor-panel div[rel=writer] {
+	float:left;
+	width:80%;
+	height:50px;
+}
+#twittor-panel div[rel=writer] input[type=text] {
+	
+	width:75%;
+	
+}
+#twittor-panel div[rel=writer] input[type=button] {
+	width:20%;
+	margin-left:10px;
+}
+#twittor-panel div.comments {
+	clear:both;
+}
 #twittor-panel div.comm {
 	margin-top:2px;
 	
-	background-image: linear-gradient(to bottom, #e8e8e8 0px, #f5f5f5 100%);
-    background-repeat: repeat-x;
-    border-color: #dcdcdc;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset, 0 1px 0 rgba(255, 255, 255, 0.1);
+	/*background-image: linear-gradient(to bottom, #e8e8e8 0px, #f5f5f5 100%);
+    background-repeat: repeat-x;*/
+    border-bottom: 1px solid #dcdcdc;
     
 	padding: 10px 3px;	
 	
-	border-radius: 3px;
 	
-	width:165px;
 }
 #twittor-panel div.comm div.date {
 	font-size:9px;
 	color:#a5a5a5;
 	text-align: right;
+	float:right;
 }
 #twittor-panel div.comm div.object  {
 	display:inline;
