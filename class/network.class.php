@@ -36,7 +36,10 @@ class TNetMsg extends TObjetStd{
 				if(method_exists($o, 'getNomUrl')) {
 					return $o->getNomUrl(1);
 				}
-				
+				else if($o->element == 'usergroup') {
+					$link = '<a href="'.dol_buildpath('/user/group/card.php?id='.$o->id,1).'">'.$o->name.'</a>';
+					return $link;
+				}
 			}
 			
 			
