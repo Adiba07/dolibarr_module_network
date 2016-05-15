@@ -88,7 +88,7 @@ class modnetwork extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@network')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'hooks'=>array('globalcard')
+			'hooks'=>array('globalcard','groupcard')
 			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/arbor.js','/network/lib/arbor/arbor-tween.js')
 			,'css' => array('/network/lib/textcomplete/dist/jquery.textcomplete.css','/network/css/network.css')
 		);

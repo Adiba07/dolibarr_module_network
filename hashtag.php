@@ -8,6 +8,7 @@
 	dol_include_once('/comm/propal/class/propal.class.php');
 	dol_include_once('/product/class/product.class.php');
 	dol_include_once('/projet/class/project.class.php');
+	dol_include_once('/user/class/usergroup.class.php');
 	
 	$tag = GETPOST('tag');
 	$type_tag = GETPOST('type_tag');
@@ -25,6 +26,21 @@
 			) ;
 			
 		}
+
+		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."usergroup WHERE nom LIKE '".$db->escape($tag)."%'");
+		while($obj = $db->fetch_object($res)) {
+			$o=new UserGroup($db);
+			$o->fetch($obj->rowid);
+			$link = '<a href="'.dol_buildpath('/user/group/card.php?id='.$obj->rowid,1).'">'.$o->name.'</a>';
+			$Tab[] = array(
+				'link'=>$link
+				,'link0'=>$link
+				,'type'=>'usergroup'
+			) ;
+			
+		}
+
+
 		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$db->escape($tag)."'");
 		while($obj = $db->fetch_object($res)) {
 			$o=new Societe($db);
