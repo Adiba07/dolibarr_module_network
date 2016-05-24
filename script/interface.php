@@ -224,10 +224,15 @@ function _search_user($tag) {
 	while($obj = $db->fetch_object($res)) {
 		$Tab[] = trim($obj->login);
 	}
-	
-	$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
+
+		$res = $db->query("SELECT nom FROM ".MAIN_DB_PREFIX."usergroup WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
+		$Tab[] = TNetMsg::simpleString($obj->nom);
+	}
+	
+		$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
+	while($obj = $db->fetch_object($res)) {
+		$Tab[] = TNetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
 	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(s.nom,'_',p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
@@ -236,7 +241,7 @@ function _search_user($tag) {
 				
 	while($obj = $db->fetch_object($res)) {
 		
-			$Tab[] = trim( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
+			$Tab[] = TNetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 		
 	}
 	

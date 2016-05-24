@@ -36,7 +36,10 @@ class TNetMsg extends TObjetStd{
 				if(method_exists($o, 'getNomUrl')) {
 					return $o->getNomUrl(1);
 				}
-				
+				else if($o->element == 'usergroup') {
+					$link = '<a href="'.dol_buildpath('/user/group/card.php?id='.$o->id,1).'">'.$o->name.'</a>';
+					return $link;
+				}
 			}
 			
 			
@@ -85,20 +88,27 @@ class TNetMsg extends TObjetStd{
 		$ref = '';
 				
 		if($object->element == 'societe' && !empty($object->code_client)) $ref = $object->code_client;
-		else if($object->element == 'societe' ) $ref = $object->name;
+		else if($object->element == 'societe' ) TNetMsg::simpleString($ref = $object->name);
 		else if($object->element == 'contact' ) {
 			dol_include_once('/societe/class/societe.class.php');
 			
 			$soc=new Societe($db);
 			$soc->fetch($object->socid);
-			$ref = trim( (!empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'_'.$object->lastname);
+			$ref = TNetMsg::simpleString(( !empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'_'.$object->lastname);
 		}
 		else if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
+		else if($object->element == 'usergroup' && !empty($object->name)) $ref = self::simpleString($object->name);
 		elseif(!empty($object->ref))$ref = $object->ref;
 			
 		
 		
 		return $ref;
+	}
+	
+	static function simpleString($s) {
+		
+		return dol_string_unaccent(dol_string_nospecial($s));
+		
 	}
 	
 	static function getRef($fk_object, $type_object) {
@@ -165,7 +175,7 @@ class TNetMsg extends TObjetStd{
 	
 	static function getTag($element, $ref) {
 		$element_tag='';
-		if($element == 'user' || $element =='company' || $element =='societe' || $element == 'contact') {
+		if($element == 'user' || $element == 'usergroup' || $element =='company' || $element =='societe' || $element == 'contact') {
 			$element_tag = '@';
 		}
 		else {
