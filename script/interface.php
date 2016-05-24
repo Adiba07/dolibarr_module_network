@@ -5,6 +5,7 @@
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/product/class/product.class.php');
 	
+	$langs->load('network@network');
 
 	$get = GETPOST('get');
 	$put = GETPOST('put');
