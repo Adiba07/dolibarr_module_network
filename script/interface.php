@@ -27,7 +27,7 @@
 			break;
 		case 'comments':
 			
-			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'));
+			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('start'));
 			
 			break;
 		case 'graph':
@@ -103,8 +103,8 @@ function _comment($fk_object,$ref,$element,$comment) {
 	
 }
 
-function _comments($id,$ref, $element) {
-	global $user;
+function _comments($id,$ref, $element, $start = 0, $length=10) {
+	global $user,$langs,$db;
 	
 	$element_tag = TNetMsg::getTag($element, $ref);
 	
@@ -113,29 +113,50 @@ function _comments($id,$ref, $element) {
 	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE (t.fk_object=".(int)$id." AND t.type_object='".$element."') OR (t.comment LIKE '%".$element_tag."%')
-	 ORDER BY t.date_cre DESC");
-	foreach($Tab as &$row) {
+	 ORDER BY t.date_cre DESC
+	 LIMIT ".$start.",".($length+1));
+	 
+	$TUser=array();
+	 
+	foreach($Tab as $k=>&$row) {
 				
-		$netmsg = new TNetMsg;
-		$netmsg->load($PDOdb, $row->rowid);		
-		
-		$r.='<div class="comm" commid="'.$netmsg->getId().'">';
-		
-		if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
-			$origin_element = $netmsg->getNomUrl();
-			if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div> ';	
+		if($k>=$length) {
+			$r.='<div class="comm showMore" start="'.$start.'" length="'.$length.'" style="text-align:center"><a href="javascript:;" onclick="NetworkLoadComment('.($start+$length).')">&#x25BC; '.$langs->trans('ShowMore').' &#x25BC;</a></div>';
 		}
-		
-		
-		$r.=$netmsg->getComment();
-		
-		if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
-			 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>';
-		}
-		$r.='<div class="date">'.dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>';
-		
-		$r.='</div>';
-		
+		else{
+			$netmsg = new TNetMsg;
+			$netmsg->load($PDOdb, $row->rowid);		
+			
+			$r.='<div class="comm" commid="'.$netmsg->getId().'">';
+			
+			if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
+				$origin_element = $netmsg->getNomUrl();
+				if(!empty($origin_element)) $r.='<div class="object">'.$origin_element.'</div> ';	
+			}
+			
+			
+			$r.=$netmsg->getComment();
+			
+			if($netmsg->fk_user == $user->id) {
+				$author = '';
+			} 
+			else { 
+			 	if(empty($TUser[$netmsg->fk_user])) {
+					$TUser[$netmsg->fk_user]=new User($db);
+					$TUser[$netmsg->fk_user]->fetch($netmsg->fk_user);
+				}
+				$author = $TUser[$netmsg->fk_user]->getFullName($langs);
+			}
+			
+			if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
+				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>';
+			}
+			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>';
+			
+			$r.='</div>';
+			
+			
+		}	
 	}
 	
 	return $r;

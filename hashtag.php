@@ -26,6 +26,21 @@
 			
 		}
 		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$db->escape($tag)."'");
+		
+		$trouve = false;
+		while($obj = $db->fetch_object($res)) {
+			$trouve = true;
+			$o=new Societe($db);
+			$o->fetch($obj->rowid);
+			$Tab[] = array(
+				'link'=>$o->getNomUrl(1)
+				,'link0'=>$o->getNomUrl(0)
+				,'type'=>'societe'
+			) ;
+		}
+
+		if(!$trouve) {
+		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
 		while($obj = $db->fetch_object($res)) {
 			$o=new Societe($db);
 			$o->fetch($obj->rowid);
@@ -34,8 +49,8 @@
 				,'link0'=>$o->getNomUrl(0)
 				,'type'=>'societe'
 			) ;
+		}
 			
-				
 		}
 		
 		list($code, $nom) = explode('_', $tag);

@@ -270,7 +270,9 @@ var Renderer = function(canvas){
   }    
 
 
-function NetworkLoadComment() {
+function NetworkLoadComment(start) {
+	
+	if(!start) start = 0;
 	
 	$.ajax({
 		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
@@ -279,9 +281,19 @@ function NetworkLoadComment() {
 	      		, element:"<?php echo GETPOST('element') ?>"
 	      		, ref:"<?php echo GETPOST('ref') ?>"
 	      		, id:<?php echo GETPOST('id') ?> 
+	      		, start : start
 	     }	
 	}).done(function (data) { 
-		$('#twittor-panel div.comments').html(data); 
+		
+		if(start>0) {
+			$('#twittor-panel div.comments div.showMore').remove();
+			$('#twittor-panel div.comments').append(data);
+		}
+		else{
+			$('#twittor-panel div.comments').html(data);	
+		}
+		
+		 
 	});
 	      
 	
