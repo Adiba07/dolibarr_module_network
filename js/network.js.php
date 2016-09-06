@@ -92,11 +92,12 @@ function getEdge(ref, element, id) {
 		
 		for (x in data) {
 			edge = data[x];
-			
 			if(edge.from.length>1 && edge.to.length>1) {
+				console.log(edge);
 				sysArbor.addEdge(edge.from,edge.to,{label:edge.label});	
+
 			}
-				
+			
 		}
 		
 	});
@@ -117,8 +118,8 @@ function showSociogram() {
 	});
 
 	sysArbor = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
-    sysArbor.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
-    sysArbor.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
+    	sysArbor.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
+    	sysArbor.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
 
 	getEdge("<?php echo GETPOST('ref') ?>", "<?php echo GETPOST('element') ?>", <?php echo GETPOST('id') ?>);
 
