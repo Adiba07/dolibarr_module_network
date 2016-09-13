@@ -4,6 +4,10 @@ class TNetMsg extends TObjetStd{
 /*
  * Ordre de fabrication d'équipement
  * */
+ 	static $regex_hashtag = '/#((\\w|-)+)/';
+	static $regex_arobase = '/@((\\w|-)+)/';
+	static $regex_colon =   '/:((\\w|-)+)/';
+ 
  	function __construct() {
  		global $user;
 		
@@ -61,9 +65,9 @@ class TNetMsg extends TObjetStd{
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace('/@((\\w|-)+)/','<a class="user" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/#(\\w+)/','<a class="object" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
-		 $comm = preg_replace('/:(\\w+)/','<a class="rel" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_arobase,'<a class="user" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_hashtag,'<a class="object" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_colon,'<a class="rel" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
 	}
@@ -140,10 +144,10 @@ class TNetMsg extends TObjetStd{
 				OR comment LIKE '%".$db->escape($tag)."%'");
 		while($obj = $db->fetch_object($res)) {
 			
-			$TTag = TNetMsg::extractTags($obj->comment, array('/@(\\w+)/','/#(\\w+)/' ));
+			$TTag = TNetMsg::extractTags($obj->comment, array(TNetMsg::$regex_arobase,TNetMsg::$regex_hashtag ));
 			if($obj->fk_object>0 && !empty($obj->type_object)) $TTag[] = TNetMsg::getTag($element, TNetMsg::getRef($obj->fk_object, $obj->type_object));
 			
-			$TTagRel = TNetMsg::extractTags($obj->comment, array( '/:(\\w+)/' ));
+			$TTagRel = TNetMsg::extractTags($obj->comment, array( TNetMsg::$regex_colon ));
 			if(empty($TTagRel))$TTagRel=array(' ');
 			//var_dump($tag,$TTag,$TTagRel);
 			foreach($TTag as $t) {
