@@ -89,7 +89,7 @@ class modnetwork extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'hooks'=>array('globalcard','groupcard')
-			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/arbor.js','/network/lib/arbor/arbor-tween.js')
+			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/arbor.js','/network/lib/arbor/arbor-tween.js','/network/js/check-message.js.php')
 			,'css' => array('/network/lib/textcomplete/dist/jquery.textcomplete.css','/network/css/network.css')
 		);
 

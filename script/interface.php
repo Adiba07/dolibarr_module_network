@@ -37,12 +37,18 @@
 			
 			break;
 			
+		case 'comments-for-me':
+			
+			__out(_commentsForMe(),'json');
+			
+			break;
+			
 	}
 
 	switch ($put) {
 		case 'comment':
 			
-			print _comment(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('comment'));
+			print _comment(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('comment'), (int)GETPOST('isTemporary'));
 			
 			break;
 			
@@ -74,43 +80,83 @@ function _graph($fk_object,$ref,$element) {
 	return $TLink;
 }
 
-function _comment($fk_object,$ref,$element,$comment) {
+function _comment($fk_object,$ref,$element,$comment,$isTemporary = 0) {
 	$PDOdb=new TPDOdb;
 	
 	$t=new TNetMsg;
 	
-	/*if($element == 'user' || $element =='company' || $element == 'contact') {
-		$element_tag = '@';
-	}
-	else {
-		$element_tag = '#';
-	}
-	
-	//$element_tag.=$element.':';
-	
-	$element_tag.=$ref;
-	*/
 	$reg = '/:[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]*/i';
 	$comment = preg_replace_callback($reg, function($matches) {
-		var_dump(dol_string_unaccent($matches[0]));
+		//var_dump(dol_string_unaccent($matches[0]));
 		return strtolower(dol_string_unaccent($matches[0]));
 	}, $comment);
 	
 	$t->fk_object = $fk_object;
 	$t->comment = $comment;
+	$t->isTemporary = $isTemporary;
 	$t->type_object = $element;
 	$t->ref= $ref;
 	$t->save($PDOdb);
 	
 }
 
+function _commentsForMe() {
+	
+	global $user,$langs,$db, $conf;
+	
+	
+	$last_check = !empty($conf->global->{ 'NETWORK_LAST_USER_CHECK_'.$user->id }) ? $conf->global->{ 'NETWORK_LAST_USER_CHECK_'.$user->id } : 0;
+	
+	dol_include_once('/core/lib/admin.lib.php');
+	$PDOdb=new TPDOdb;
+	$element_tag = TNetMsg::getTag('user', $user->login);
+	
+	$sql = "SELECT DISTINCT t.rowid	FROM ".MAIN_DB_PREFIX."netmsg t  
+	 WHERE t.fk_user!=".$user->id;
+	 
+	 if($last_check>0) $sql.=" AND t.date_cre>'".date('Y-m-d H:i:s',$last_check)."'";
+	 $sql.= " AND ((t.fk_object=".(int)$user->id." AND t.type_object='user') OR (t.comment LIKE '%".$element_tag."%'))
+	 ORDER BY t.date_cre DESC";
+	
+	$Tab = $PDOdb->ExecuteAsArray($sql);
+	
+	$TComment = array();
+	foreach($Tab as $k=>&$row) {
+		
+		$netmsg = new TNetMsg;
+		$netmsg->load($PDOdb, $row->rowid);	
+		
+		$author=new User($db);
+		if($author->fetch($netmsg->fk_user)>0) {
+		
+			$TComment[] = array(
+				'comment'=>$netmsg->comment
+				,'id'=>$netmsg->getId()
+				,'origin'=>$netmsg->getNomUrl(0)
+				,'author'=>$author->login
+			);
+			
+		}
+		
+	}
+	
+	dolibarr_set_const($db, 'NETWORK_LAST_USER_CHECK_'.$user->id, time(),'integer',0,'',$conf->entity);
+	
+	
+	return $TComment;
+}
+
 function _comments($id,$ref, $element, $start = 0, $length=10) {
 	global $user,$langs,$db;
 	
 	$element_tag = TNetMsg::getTag($element, $ref);
-	
+	//TODO create static function TNetMsg::getMessages($PDOdb)
 	$PDOdb=new TPDOdb;
+	
+	TNetMsg::clearTempMesg($PDOdb);
+	
 	$r='';
+
 	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE (t.fk_object=".(int)$id." AND t.type_object='".$element."') OR (t.comment LIKE '%".$element_tag."%')
@@ -128,7 +174,13 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			$netmsg = new TNetMsg;
 			$netmsg->load($PDOdb, $row->rowid);		
 			
-			$r.='<div class="comm" commid="'.$netmsg->getId().'">';
+			$r.='<div class="comm '.($netmsg->isTemporary ? 'temporary' : '').'" commid="'.$netmsg->getId().'">';
+			
+			if($netmsg->isTemporary) {
+				
+				$r.=img_help(1, $langs->trans('ThisIsTemporayMessage'));
+				
+			}
 			
 			if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
 				$origin_element = $netmsg->getNomUrl();

@@ -36,9 +36,24 @@
 	
 	
 }
+
+#twittor-panel div.comm.temporary {
+	background-color: #eeeeff;
+}
+
 #twittor-panel div.comm:nth-child(odd) {
 	background-color: #eee;
 }
+
+#twittor-panel div.comm.temporary:nth-child(odd) {
+	background-color: #ddddff;
+}
+
+.jnotify-container .jnotify-notification-netmsg .jnotify-background {
+	background-color: #ddddff;
+	border-radius:0;
+}
+
 #twittor-panel div.comm div.date {
 	font-size:9px;
 	color:#a5a5a5;

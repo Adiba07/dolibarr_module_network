@@ -13,7 +13,7 @@ class TNetMsg extends TObjetStd{
 		
 		$this->set_table(MAIN_DB_PREFIX.'netmsg');
 	  
-		$this->add_champs('fk_object,fk_user',array('type'=>'int', 'index'=>true));
+		$this->add_champs('fk_object,fk_user,isTemporary',array('type'=>'integer', 'index'=>true));
 		$this->add_champs('type_object,ref',array('type'=>'string', 'index'=>true, 'length'=>50));
 		$this->add_champs('comment',array('type'=>'string', 'index'=>true, 'length'=>140));
 		
@@ -25,7 +25,7 @@ class TNetMsg extends TObjetStd{
 		
 	}
 	
-	function getNomUrl() {
+	function getNomUrl($picto = 1) {
 		global $db;
 		
 		$type= $this->type_object;
@@ -38,7 +38,7 @@ class TNetMsg extends TObjetStd{
 			if($o->fetch($this->fk_object)>0) {
 				
 				if(method_exists($o, 'getNomUrl')) {
-					return $o->getNomUrl(1);
+					return $o->getNomUrl($picto);
 				}
 				else if($o->element == 'usergroup') {
 					$link = '<a href="'.dol_buildpath('/user/group/card.php?id='.$o->id,1).'">'.$o->name.'</a>';
@@ -54,11 +54,8 @@ class TNetMsg extends TObjetStd{
 	
 	function save(&$PDOdb) {
 		
-		/*$this->set_tags('/(^|\s)@(\w*)/');
-		$this->set_tags('/(^|\s):(\w*)/');
-		$this->set_tags('/(^|\s)#(\w*)/');
-		*/
-		//$PDOdb->debug=true;
+		//self::clearTempMesg($PDOdb);
+		
 		parent::save($PDOdb);
 	}
 	
@@ -70,6 +67,12 @@ class TNetMsg extends TObjetStd{
 		 $comm = preg_replace(TNetMsg::$regex_colon,'<a class="rel" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
+	}
+	
+	static function clearTempMesg(&$PDOdb){
+		
+		$PDOdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."netmsg WHERE isTemporary = 1 AND date_cre<=(NOW() - INTERVAL 1 MINUTE) ");
+		
 	}
 	
 	static function extractTags($s, $TReg) {

@@ -25,7 +25,9 @@ $(document).ready(function() {
 	$writer = $div.find('[rel=writer]');
 	
 	$writer.append('<input type="text" name="comment" maxlength="140" placeholder="Saisissez une relation (140car. max.)" />');
-	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
+	$checkbox = $('<input type="checkbox" name="isTemporary" value = "1" title="<?php echo addslashes($langs->trans('CreateTemporaryMessage')); ?>" />');
+	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>" />');
+	
 	$writer.find('input[name=comment]').keypress(function(e) {
 		if(e.which == 13) {
 	        addComment();
@@ -39,6 +41,7 @@ $(document).ready(function() {
 	
 	function addComment() {
 		var comment = $('#twittor-panel input[name=comment]').val();
+		var isTemporary = $('#twittor-panel input[name=isTemporary]').is(":checked") ? 1 : 0;
 		
 		if(comment.trim() == '') return false;
 		
@@ -47,6 +50,7 @@ $(document).ready(function() {
 			,data:{ 
 		      		put:"comment"
 		      		,comment:comment
+		      		,isTemporary:isTemporary
 		      		, element:"<?php echo GETPOST('element') ?>"
 		      		, ref:"<?php echo GETPOST('ref') ?>"
 		      		, id:<?php echo GETPOST('id') ?> 
@@ -59,6 +63,18 @@ $(document).ready(function() {
 			
 	}
 	
+	$checkbox.change(function() {
+		
+		if($(this).is(":checked")) {
+			$button.css({"border-color" : "#3333ff"});
+		}
+		else{
+			$button.css({"border-color" : ""});
+		}
+		
+	});
+	
+	$writer.append($checkbox);
 	$writer.append($button);
 	
 	<?php
