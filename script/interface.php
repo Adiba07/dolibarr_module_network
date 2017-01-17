@@ -113,7 +113,9 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 	$r='';
 	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
 	FROM ".MAIN_DB_PREFIX."netmsg t  
-	 WHERE (t.fk_object=".(int)$id." AND t.type_object='".$element."') OR (t.comment LIKE '%".$element_tag."%')
+	 WHERE 
+		(t.fk_object=".(int)$id." AND t.type_object='".$element."') 
+		OR (t.comment LIKE '%".$element_tag."%')
 	 ORDER BY t.date_cre DESC
 	 LIMIT ".$start.",".($length+1));
 	 
