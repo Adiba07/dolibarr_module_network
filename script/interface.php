@@ -115,7 +115,8 @@ function _commentsForMe() {
 	 WHERE t.fk_user!=".$user->id;
 	 
 	 if($last_check>0) $sql.=" AND t.date_cre>'".date('Y-m-d H:i:s',$last_check)."'";
-	 $sql.= " AND ((t.fk_object=".(int)$user->id." AND t.type_object='user') OR (t.comment LIKE '%".$element_tag."%'))
+	 $sql.= " AND ((t.fk_object=".(int)$user->id." AND t.type_object='user') 
+	 		OR (t.comment LIKE '%".$element_tag."%'))
 	 ORDER BY t.date_cre DESC";
 	
 	$Tab = $PDOdb->ExecuteAsArray($sql);
@@ -142,6 +143,7 @@ function _commentsForMe() {
 	
 	dolibarr_set_const($db, 'NETWORK_LAST_USER_CHECK_'.$user->id, time(),'integer',0,'',$conf->entity);
 	
+	TNetMsg::clearTempMesg($PDOdb, $user->id, $element_tag);
 	
 	return $TComment;
 }
@@ -152,8 +154,6 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 	$element_tag = TNetMsg::getTag($element, $ref);
 	//TODO create static function TNetMsg::getMessages($PDOdb)
 	$PDOdb=new TPDOdb;
-	
-	TNetMsg::clearTempMesg($PDOdb);
 	
 	$r='';
 

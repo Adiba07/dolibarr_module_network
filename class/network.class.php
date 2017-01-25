@@ -69,9 +69,24 @@ class TNetMsg extends TObjetStd{
 		 return $comm;
 	}
 	
-	static function clearTempMesg(&$PDOdb){
+	static function clearTempMesg(&$PDOdb, $fk_user = 0, $tag =''){
 		
-		$PDOdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."netmsg WHERE isTemporary = 1 AND date_cre<=(NOW() - INTERVAL 1 MINUTE) ");
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."netmsg t
+				WHERE isTemporary = 1 AND date_cre<=(NOW() - INTERVAL 1 MINUTE) ";
+		
+		if($fk_user>0 || !empty($tag)) {
+			
+			$TSubSQL = array();
+			
+			if($fk_user>0)$TSubSQL[]=" (t.fk_object=".(int)$user->id." AND t.type_object='user')";
+			if(!empty($tag))$TSubSQL[]=" (t.comment LIKE '%".$element_tag."%')";
+					
+			
+			$sql.=' AND ( '.implode(' OR ', $TSubSQL).' ) ';
+		}
+		
+		
+		$PDOdb->Execute($sql);
 		
 	}
 	
