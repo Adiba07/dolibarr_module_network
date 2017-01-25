@@ -187,7 +187,7 @@ function _search_tag($tag) {
 	natsort($Tab);
 	
 	return $Tab;
-}date_cre
+}
 
 function _search_element($tag) {
 	global $db;
