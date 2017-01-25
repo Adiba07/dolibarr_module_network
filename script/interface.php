@@ -111,7 +111,7 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 	
 	$PDOdb=new TPDOdb;
 	$r='';
-	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid
+	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid,date_cre
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE 
 		(t.fk_object=".(int)$id." AND t.type_object='".$element."') 
@@ -187,7 +187,7 @@ function _search_tag($tag) {
 	natsort($Tab);
 	
 	return $Tab;
-}
+}date_cre
 
 function _search_element($tag) {
 	global $db;
