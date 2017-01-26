@@ -14,7 +14,7 @@ class TNetMsg extends TObjetStd{
 		$this->set_table(MAIN_DB_PREFIX.'netmsg');
 	  
 		$this->add_champs('fk_object,fk_user',array('type'=>'int', 'index'=>true));
-		$this->add_champs('type_object,ref',array('type'=>'string', 'index'=>true, 'length'=>50));
+		$this->add_champs('type_object,ref,sub_object',array('type'=>'string', 'index'=>true, 'length'=>50));
 		$this->add_champs('comment',array('type'=>'string', 'index'=>true, 'length'=>140));
 		
 		$this->start();
@@ -138,6 +138,12 @@ class TNetMsg extends TObjetStd{
 		
 		
 		return '';
+		
+	}
+	
+	static function widget($fk_object, $type_object, $subobject='') {
+		
+		return ' <a href="javascript:showWidgetComment('.$fk_object.',\''.$type_object.'\',\''.$subobject.'\')">'.img_picto('','object_network.png@network').'</a> ';
 		
 	}
 	

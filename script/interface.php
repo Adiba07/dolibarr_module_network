@@ -124,7 +124,7 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 	foreach($Tab as $k=>&$row) {
 				
 		if($k>=$length) {
-			$r.='<div class="comm showMore" start="'.$start.'" length="'.$length.'" style="text-align:center"><a href="javascript:;" onclick="NetworkLoadComment('.($start+$length).')">&#x25BC; '.$langs->trans('ShowMore').' &#x25BC;</a></div>';
+			$r.='<div class="comm showMore" start="'.$start.'" length="'.$length.'" style="text-align:center"><a href="javascript:;" onclick="NetworkLoadComment(\''.$element.'\',\''.$ref.'\' ,'.$id.',   '.($start+$length).')">&#x25BC; '.$langs->trans('ShowMore').' &#x25BC;</a></div>';
 		}
 		else{
 			$netmsg = new TNetMsg;
