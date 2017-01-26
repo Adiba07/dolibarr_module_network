@@ -32,6 +32,15 @@ class TNetMsg extends TObjetStd{
 		//if($type == 'projet') $type='project';
 		
 		$object_name = ucfirst($type);
+		
+		if($object_name=='Societe') dol_include_once('/societe/class/societe.class.php');
+		else if($object_name=='Contact') dol_include_once('/contact/class/contact.class.php');
+		else if($object_name=='Facture')dol_include_once('/compta/facture/class/facture.class.php');
+		else if($object_name=='Propal')dol_include_once('/comm/propal/class/propal.class.php');
+		else if($object_name=='Product')dol_include_once('/product/class/product.class.php');
+		else if($object_name=='Project')dol_include_once('/projet/class/project.class.php');
+		else if($object_name=='Usergroup')dol_include_once('/user/class/usergroup.class.php');
+		
 		if(class_exists($object_name)) {
 			
 			$o=new $object_name($db);
