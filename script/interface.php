@@ -28,7 +28,7 @@
 			break;
 		case 'comments':
 			
-			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('start'));
+			print _comments(GETPOST('id'),GETPOST('ref'), GETPOST('element'),GETPOST('sub_element'), GETPOST('start'));
 			
 			break;
 		case 'graph':
@@ -42,7 +42,7 @@
 	switch ($put) {
 		case 'comment':
 			
-			print _comment(GETPOST('id'),GETPOST('ref'), GETPOST('element'), GETPOST('comment'));
+			print _comment(GETPOST('id'),GETPOST('ref'), GETPOST('element'),GETPOST('sub_element'), GETPOST('comment'));
 			
 			break;
 			
@@ -74,7 +74,7 @@ function _graph($fk_object,$ref,$element) {
 	return $TLink;
 }
 
-function _comment($fk_object,$ref,$element,$comment) {
+function _comment($fk_object,$ref,$element,$sub_element,$comment) {
 	$PDOdb=new TPDOdb;
 	
 	$t=new TNetMsg;
@@ -99,25 +99,34 @@ function _comment($fk_object,$ref,$element,$comment) {
 	$t->fk_object = $fk_object;
 	$t->comment = $comment;
 	$t->type_object = $element;
+	$t->sub_object = $sub_element;
 	$t->ref= $ref;
 	$t->save($PDOdb);
 	
 }
 
-function _comments($id,$ref, $element, $start = 0, $length=10) {
+function _comments($id,$ref, $element, $sub_element='', $start = 0, $length=10) {
 	global $user,$langs,$db;
 	
 	$element_tag = TNetMsg::getTag($element, $ref);
 	
 	$PDOdb=new TPDOdb;
 	$r='';
-	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid,date_cre
+	
+	$sql ="SELECT DISTINCT t.rowid,date_cre
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE 
 		(t.fk_object=".(int)$id." AND t.type_object='".$element."') 
 		OR (t.comment LIKE '%".$element_tag."%')
-	 ORDER BY t.date_cre DESC
-	 LIMIT ".$start.",".($length+1));
+	";		
+	
+	if(!empty($sub_element)) $sql.=" AND sub_object='".$sub_element."'";
+				
+	$sql.=" ORDER BY t.date_cre DESC
+	 LIMIT ".$start.",".($length+1);
+	
+	
+	$Tab = $PDOdb->ExecuteAsArray($sql);
 	 
 	$TUser=array();
 	 

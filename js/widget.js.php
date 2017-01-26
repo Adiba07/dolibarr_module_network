@@ -23,7 +23,7 @@ function showWidgetComment(fk_object,type_object, sub_object) {
 }
 
 
-function NetworkLoadComment(element,ref,id,start) {
+function NetworkLoadComment(element,sub_element,ref,id,start) {
 	
 	if(!start) start = 0;
 	
@@ -34,6 +34,7 @@ function NetworkLoadComment(element,ref,id,start) {
 	      		, element:element
 	      		, ref:ref
 	      		, id:id 
+	      		, sub_element:sub_element
 	      		, start : start
 	     }	
 	}).done(function (data) { 
@@ -52,7 +53,7 @@ function NetworkLoadComment(element,ref,id,start) {
 	
 }
 
-function drawNetworkWidget(id, element, ref,$div) {
+function drawNetworkWidget(id, element,sub_element, ref,$div) {
 
 	$div.append('<div rel="writer"></div>');
 
@@ -88,6 +89,7 @@ function drawNetworkWidget(id, element, ref,$div) {
 		      		put:"comment"
 		      		,comment:comment
 		      		, element:element
+		      		, sub_element:sub_element
 		      		, ref:ref
 		      		, id:id 
 		     }
@@ -108,7 +110,7 @@ function drawNetworkWidget(id, element, ref,$div) {
 	
 	$div.append('<div class="comments"></div>');
 	
-	NetworkLoadComment(element,ref,id);
+	NetworkLoadComment(element,sub_element,ref,id);
 	
 	setTextTag(element,ref,id);
 	

@@ -28,7 +28,7 @@
 	</style>
 	<div id="twittor-panel" class="tabBar"></div>
 	<script type="text/javascript">
-		drawNetworkWidget( <?php echo GETPOST('fk_object')?>, "<?php echo GETPOST('type_object') ?>", "<?php echo $ref ?>" ,$('#twittor-panel') );
+		drawNetworkWidget( <?php echo GETPOST('fk_object')?>, "<?php echo GETPOST('type_object') ?>", "<?php echo GETPOST('sub_object') ?>", "<?php echo $ref ?>" ,$('#twittor-panel') );
 	</script>
 	
 	<?php 

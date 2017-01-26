@@ -19,7 +19,7 @@ $(document).ready(function() {
 	
 	$('#id-right').append($div);
 	
-	drawNetworkWidget( <?php echo GETPOST('id')?>, "<?php echo GETPOST('element') ?>", "<?php echo GETPOST('ref') ?>" ,$div );
+	drawNetworkWidget( <?php echo GETPOST('id')?>, "<?php echo GETPOST('element') ?>", "", "<?php echo GETPOST('ref') ?>" ,$div );
 	
 });
 
