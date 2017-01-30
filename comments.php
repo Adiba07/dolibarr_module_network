@@ -25,6 +25,10 @@
 		padding:0 0 0 0;
 		margin:0 0 0 0;
 	}
+	div.tabBar {
+		border-top:0 none;
+		border-bottom:0 none; 
+	}
 	</style>
 	<div id="twittor-panel" class="tabBar"></div>
 	<script type="text/javascript">
