@@ -74,9 +74,9 @@ class TNetMsg extends TObjetStd{
 	function getComment() {
 		 $comm = $this->comment;
 		
-		 $comm = preg_replace(TNetMsg::$regex_arobase,'<a class="user" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
-		 $comm = preg_replace(TNetMsg::$regex_hashtag,'<a class="object" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
-		 $comm = preg_replace(TNetMsg::$regex_colon,'<a class="rel" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_arobase,'<a class="user badge network_badge" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=user',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_hashtag,'<a class="object badge network_badge" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=hashtag',1).'">$0</a>',$comm);
+		 $comm = preg_replace(TNetMsg::$regex_colon,'<a class="rel badge network_badge" href="'.dol_buildpath('/network/hashtag.php?tag=$1&type_tag=rel',1).'">$0</a>',$comm);
 		
 		 return $comm;
 	}
