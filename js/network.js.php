@@ -2,13 +2,14 @@
 
 	require('../config.php');
 	dol_include_once('/network/class/network.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	
 	if(empty($user->rights->network->read)) exit; // pas les droit de lecture
 
 	$langs->load('network@network');
 
 	$element_tag = TNetMsg::getTag(GETPOST('element'), GETPOST('ref'));
-
+	
 ?>
 var cache = [];
 
@@ -16,7 +17,7 @@ $(document).ready(function() {
 	var html = '<div class="tabBar">';
 			html+= '<div rel="header"><p>';
 				html+= '<a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a>';
-				html+= '&nbsp;<b><?php echo $langs->trans('Network') ?></b>';
+				html+= '&nbsp;<b><?php echo $langs->trans('Network') ?></b> <span id="network_span_to_help"></span>';
 			html+= '</p></div>';
 			html+= '<div rel="current_object"><p class="align-right"><b><?php echo $element_tag; ?> : </b></p></div>';
 			html+= '<div rel="writer"></div>';
@@ -25,6 +26,9 @@ $(document).ready(function() {
 
 	var $div = $(html);
 	$div.attr('id','twittor-panel');
+	
+	$div.find('#network_span_to_help').append(<?php echo json_encode(Form::textwithtooltip('', $langs->trans('networkHowToUse'), 2, 1, '<span class="fa fa-question-circle" aria-hidden="true"></span>', 'networkHelp', 2)); ?>);
+	
 	<?php
 	
 	if(!empty($user->rights->network->write)) {
