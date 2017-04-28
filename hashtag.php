@@ -159,13 +159,30 @@
 			
 				
 		}
-		
-				
-		
-		
-			
+	
 	}
 	else {
+		if (!empty($user->rights->network->view->all))
+		{
+			$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."netmsg");
+		
+			$PDOdb=new TPDOdb;
+			while($obj = $db->fetch_object($res)) {
+
+				$netmsg = new TNetMsg;
+				$netmsg->load($PDOdb, $obj->rowid);
+
+				$Tab[] = array(
+					'link'=>$netmsg->getNomUrl()
+					,'text'=>$netmsg->getComment()
+				) ;
+
+			}
+		}
+		else
+		{
+			accessforbidden();
+		}
 		
 	}
 	

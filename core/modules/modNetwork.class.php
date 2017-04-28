@@ -89,7 +89,7 @@ class modnetwork extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@network')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'hooks'=>array('globalcard','groupcard')
+			'hooks'=>array('globalcard','groupcard','toprightmenu')
 			,'js' => array('/network/lib/textcomplete/dist/jquery.textcomplete.min.js','/network/lib/arbor/arbor.js','/network/lib/arbor/arbor-tween.js')
 			,'css' => array('/network/lib/textcomplete/dist/jquery.textcomplete.css','/network/css/network.css')
 		);
@@ -199,6 +199,14 @@ class modnetwork extends DolibarrModules
 		$this->rights[$r][1] = 'Administrer les commentaires';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+						// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		
+		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'CanViewAllLink';	// Permission label
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'view';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'all';
 						// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 

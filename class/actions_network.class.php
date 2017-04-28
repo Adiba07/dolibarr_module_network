@@ -80,5 +80,19 @@ class Actionsnetwork
 		<script type="text/javascript" src="<?php echo dol_buildpath('/network/js/network.js.php?element='.$object->element.'&id='.$object->id.'&ref='.$ref,1) ?>"></script>
 		<?php	
 		
-	}	
+	}
+	
+	function printTopRightMenu($parameters, &$object, &$action, $hookmanager)
+	{
+		global $user,$langs;
+		
+		if (empty($user->rights->network->view->all)) return 0;
+		
+		$langs->load('network@network');
+
+		$text = '<a id="network_block_other" href="'. dol_buildpath('/network/hashtag.php', 1).'"><span class="fa fa-hashtag atoplogin" aria-hidden="true"></span></a>';
+		$hookmanager->resPrint.= Form::textwithtooltip('', $langs->trans("networkToolTip"), 2, 1, $text, 'network_block_other', 2);
+		
+		return 0;
+	}
 }

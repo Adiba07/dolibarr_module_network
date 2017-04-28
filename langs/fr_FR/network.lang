@@ -7,3 +7,8 @@ networkSetup = Configuration du module Network
 networkAbout = A propos du module Network
 CreateTwiiit=Commenter ça
 ShowMore=Voir la suite...
+
+
+CanViewAllLink=Peut consulter la liste général des liens
+
+networkToolTip=Liste des liens sociaux
