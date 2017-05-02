@@ -7,3 +7,9 @@ networkSetup = Configuration du module Network
 networkAbout = A propos du module Network
 CreateTwiiit=Commenter ça
 ShowMore=Voir la suite...
+
+
+CanViewAllLink=Peut consulter la liste général des liens
+
+networkToolTip=Liste des liens sociaux
+networkHowToUse=<b>Comment utiliser Network ?</b><br /><u>Il existe 3 types de tags :</u><br />&nbsp;&nbsp;&nbsp;&nbsp;<b>Lien :</b> préfixé par le caractère ":"<br />&nbsp;&nbsp;&nbsp;&nbsp;<b>Objet utilisateur/Société :</b> préfixé par le caractère "@"<br />&nbsp;&nbsp;&nbsp;&nbsp;<b>Objet devis/commande/... :</b> préfixé par le caractère "#"<br />Le <b>Lien</b> a une valeur libre, il s'agit d'un mot (exemple : "connait")<br />Le 2 autres seront déterminés par la liste de recerche qui apparait après avoir saisie le caractère "#" ou "@"

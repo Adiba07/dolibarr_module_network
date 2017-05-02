@@ -2,35 +2,48 @@
 
 	require('../config.php');
 	dol_include_once('/network/class/network.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	
 	if(empty($user->rights->network->read)) exit; // pas les droit de lecture
 
 	$langs->load('network@network');
 
 	$element_tag = TNetMsg::getTag(GETPOST('element'), GETPOST('ref'));
-
+	
 ?>
 var cache = [];
 
 $(document).ready(function() {
-	
-	$div = $('<div class="tabBar"><div rel="header"><strong><?php echo $langs->trans('Network') ?> <?php echo $element_tag; ?></strong> <a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a></div><div rel="writer"></div></div>');
+	var html = '<div class="tabBar">';
+			html+= '<div rel="header"><p>';
+				html+= '<a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a>';
+				html+= '&nbsp;<b><?php echo $langs->trans('Network') ?></b> <span id="network_span_to_help"></span>';
+			html+= '</p></div>';
+			html+= '<div rel="current_object"><p class="align-right"><b><?php echo $element_tag; ?> : </b></p></div>';
+			html+= '<div rel="writer"></div>';
+			html+= '<div rel="add_comment"></div>';
+		html+= '</div>';
+
+	var $div = $(html);
 	$div.attr('id','twittor-panel');
+	
+	$div.find('#network_span_to_help').append(<?php echo json_encode(Form::textwithtooltip('', $langs->trans('networkHowToUse'), 2, 1, '<span class="fa fa-question-circle" aria-hidden="true"></span>', 'networkHelp', 2)); ?>);
+	
 	<?php
 	
 	if(!empty($user->rights->network->write)) {
 		
 	?>
 	
-	$writer = $div.find('[rel=writer]');
-	
-	$writer.append('<input type="text" name="comment" maxlength="140" placeholder="Saisissez une relation (140car. max.)" />');
-	$button = $('<input type="button" name="btcomment" class="button" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
+	var $writer = $div.find('[rel=writer]');
+	$writer.append('<p><input type="text" name="comment" maxlength="140" placeholder="Saisissez une relation (140car. max.)" /></p>');
 	$writer.find('input[name=comment]').keypress(function(e) {
 		if(e.which == 13) {
 	        addComment();
 	    }
 	});
+	
+	var $button = $('<input type="button" name="btcomment" class="button butAction" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
 	$button.click(function() {
 		
 		addComment();
@@ -59,7 +72,7 @@ $(document).ready(function() {
 			
 	}
 	
-	$writer.append($button);
+	$div.find('[rel=add_comment]').append($button);
 	
 	<?php
 	}

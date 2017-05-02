@@ -130,7 +130,7 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			$netmsg = new TNetMsg;
 			$netmsg->load($PDOdb, $row->rowid);		
 			
-			$r.='<div class="comm" commid="'.$netmsg->getId().'">';
+			$r.='<div class="comm" commid="'.$netmsg->getId().'">'.PHP_EOL;
 			
 			if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
 				$origin_element = $netmsg->getNomUrl();
@@ -138,7 +138,7 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			}
 			
 			
-			$r.=$netmsg->getComment();
+			$r.=$netmsg->getComment().PHP_EOL;
 			
 			if($netmsg->fk_user == $user->id) {
 				$author = '';
@@ -152,11 +152,11 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			}
 			
 			if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
-				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>';
+				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>'.PHP_EOL;
 			}
-			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>';
+			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>'.PHP_EOL;
 			
-			$r.='</div>';
+			$r.='</div>'.PHP_EOL;
 			
 			
 		}	
