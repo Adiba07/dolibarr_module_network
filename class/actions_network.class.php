@@ -72,7 +72,7 @@ class Actionsnetwork
 		dol_include_once('/network/config.php');
 		dol_include_once('/network/class/network.class.php');
 		
-		$ref = TNetMsg::getRefByObject($object);
+		$ref = NetMsg::getRefByObject($object);
 		
 		if(empty($ref)) return 0;
 		

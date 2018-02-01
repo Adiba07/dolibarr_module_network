@@ -8,7 +8,7 @@
 
 	$langs->load('network@network');
 
-	$element_tag = TNetMsg::getTag(GETPOST('element'), GETPOST('ref'));
+	$element_tag = NetMsg::getTag(GETPOST('element'), GETPOST('ref'));
 	
 ?>
 var cache = [];
