@@ -103,12 +103,12 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 	$element_tag = NetMsg::getTag($element, $ref);
 	
 	$r='';
-	$resql = $db->query("SELECT DISTINCT t.rowid,date_cre
+	$resql = $db->query("SELECT DISTINCT t.rowid,date_creation
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE 
 		(t.fk_object=".(int)$id." AND t.type_object='".$element."') 
 		OR (t.comment LIKE '%".$element_tag."%')
-	 ORDER BY t.date_cre DESC
+	 ORDER BY t.date_creation DESC
 	 LIMIT ".$start.",".($length+1));
 	 
 	$TUser=array();
@@ -147,7 +147,7 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
 				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->id.')">'.img_delete().'</a></div>'.PHP_EOL;
 			}
-			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>'.PHP_EOL;
+			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_creation, 'dayhourtextshort').'</div>'.PHP_EOL;
 			
 			$r.='</div>'.PHP_EOL;
 			
