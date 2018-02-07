@@ -56,10 +56,11 @@
 
 function _removeComment($id) {
 	
-	$PDOdb=new TPDOdb;
-	$t=new TNetMsg;
-	if($t->load($PDOdb, $id)) {
-		$t->delete($PDOdb);
+	global $user,$db;
+	
+	$t=new NetMsg($db);
+	if($t->fetch($id)) {
+		$t->delete($user);
 		return 'ok';
 	}
 	
@@ -69,27 +70,16 @@ function _removeComment($id) {
 
 function _graph($fk_object,$ref,$element) {
 	$TLink=array();
-	TNetMsg::getLinkFor($TLink,$fk_object, $element, TNetMsg::getTag($element, $ref) );
+	NetMsg::getLinkFor($TLink,$fk_object, $element, NetMsg::getTag($element, $ref) );
 	
 	return $TLink;
 }
 
 function _comment($fk_object,$ref,$element,$comment) {
-	$PDOdb=new TPDOdb;
 	
-	$t=new TNetMsg;
+	global $db, $user;
+	$t=new NetMsg($db);
 	
-	/*if($element == 'user' || $element =='company' || $element == 'contact') {
-		$element_tag = '@';
-	}
-	else {
-		$element_tag = '#';
-	}
-	
-	//$element_tag.=$element.':';
-	
-	$element_tag.=$ref;
-	*/
 	$reg = '/:[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]*/i';
 	$comment = preg_replace_callback($reg, function($matches) {
 		var_dump(dol_string_unaccent($matches[0]));
@@ -100,37 +90,40 @@ function _comment($fk_object,$ref,$element,$comment) {
 	$t->comment = $comment;
 	$t->type_object = $element;
 	$t->ref= $ref;
-	$t->save($PDOdb);
+	$res = $t->create($user);
+	if($res<=0) {
+		var_dump($t);exit;
+	}
 	
 }
 
 function _comments($id,$ref, $element, $start = 0, $length=10) {
 	global $user,$langs,$db;
 	
-	$element_tag = TNetMsg::getTag($element, $ref);
+	$element_tag = NetMsg::getTag($element, $ref);
 	
-	$PDOdb=new TPDOdb;
 	$r='';
-	$Tab = $PDOdb->ExecuteAsArray("SELECT DISTINCT t.rowid,date_cre
+	$resql = $db->query("SELECT DISTINCT t.rowid,date_creation
 	FROM ".MAIN_DB_PREFIX."netmsg t  
 	 WHERE 
 		(t.fk_object=".(int)$id." AND t.type_object='".$element."') 
 		OR (t.comment LIKE '%".$element_tag."%')
-	 ORDER BY t.date_cre DESC
+	 ORDER BY t.date_creation DESC
 	 LIMIT ".$start.",".($length+1));
 	 
 	$TUser=array();
-	 
-	foreach($Tab as $k=>&$row) {
+	
+	$k = 0;
+	while($row = $db->fetch_object($resql)) {
 				
 		if($k>=$length) {
 			$r.='<div class="comm showMore" start="'.$start.'" length="'.$length.'" style="text-align:center"><a href="javascript:;" onclick="NetworkLoadComment('.($start+$length).')">&#x25BC; '.$langs->trans('ShowMore').' &#x25BC;</a></div>';
 		}
 		else{
-			$netmsg = new TNetMsg;
-			$netmsg->load($PDOdb, $row->rowid);		
+			$netmsg = new NetMsg($db);
+			$netmsg->fetch($row->rowid);		
 			
-			$r.='<div class="comm" commid="'.$netmsg->getId().'">'.PHP_EOL;
+			$r.='<div class="comm" commid="'.$netmsg->id.'">'.PHP_EOL;
 			
 			if($id!=$netmsg->fk_object || $element!=$netmsg->type_object) {
 				$origin_element = $netmsg->getNomUrl();
@@ -152,14 +145,16 @@ function _comments($id,$ref, $element, $start = 0, $length=10) {
 			}
 			
 			if(($netmsg->fk_user == $user->id && $user->rights->network->write) || $user->rights->network->admin) {
-				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->getId().')">'.img_delete().'</a></div>'.PHP_EOL;
+				 $r.='<div class="delete"><a href="javascript:networkRemoveComment('.$netmsg->id.')">'.img_delete().'</a></div>'.PHP_EOL;
 			}
-			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_cre, 'dayhourtextshort').'</div>'.PHP_EOL;
+			$r.='<div class="date">'.(empty($author) ? '' : $author.' - ').dol_print_date($netmsg->date_creation, 'dayhourtextshort').'</div>'.PHP_EOL;
 			
 			$r.='</div>'.PHP_EOL;
 			
 			
 		}	
+		
+		$k++;
 	}
 	
 	return $r;
@@ -230,12 +225,12 @@ function _search_user($tag) {
 
 		$res = $db->query("SELECT nom FROM ".MAIN_DB_PREFIX."usergroup WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = TNetMsg::simpleString($obj->nom);
+		$Tab[] = NetMsg::simpleString($obj->nom);
 	}
 	
 		$res = $db->query("SELECT CONCAT(code_client,' ',nom) as nom, nom as nom_default  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%' LIMIT 10");
 	while($obj = $db->fetch_object($res)) {
-		$Tab[] = TNetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
+		$Tab[] = NetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 	}
 	
 	$res = $db->query("SELECT  CONCAT(s.code_client,'_',p.lastname,' ',p.firstname) as nom,CONCAT(s.nom,'_',p.lastname,' ',p.firstname) as nom_default FROM ".MAIN_DB_PREFIX."socpeople p 
@@ -244,7 +239,7 @@ function _search_user($tag) {
 				
 	while($obj = $db->fetch_object($res)) {
 		
-			$Tab[] = TNetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
+			$Tab[] = NetMsg::simpleString( !empty($obj->nom) ? $obj->nom : $obj->nom_default );	
 		
 	}
 	

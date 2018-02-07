@@ -92,11 +92,10 @@
 		
 		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."netmsg WHERE comment LIKE '%:".$db->escape($tag)."%'");
 		
-		$PDOdb=new TPDOdb;
 		while($obj = $db->fetch_object($res)) {
 					
-			$netmsg = new TNetMsg;
-			$netmsg->load($PDOdb, $obj->rowid);		
+			$netmsg = new NetMsg($db);
+			$netmsg->fetch($obj->rowid);		
 			
 			$Tab[] = array(
 				'link'=>$netmsg->getNomUrl()
@@ -166,11 +165,10 @@
 		{
 			$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."netmsg");
 		
-			$PDOdb=new TPDOdb;
 			while($obj = $db->fetch_object($res)) {
 
-				$netmsg = new TNetMsg;
-				$netmsg->load($PDOdb, $obj->rowid);
+				$netmsg = new NetMsg($db);
+				$netmsg->fetch($obj->rowid);
 
 				$Tab[] = array(
 					'link'=>$netmsg->getNomUrl()
