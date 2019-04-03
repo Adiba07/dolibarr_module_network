@@ -40,38 +40,12 @@
 		}
 
 
-		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$db->escape($tag)."'");
-		
-		$trouve = false;
-		while($obj = $db->fetch_object($res)) {
-			$trouve = true;
-			$o=new Societe($db);
-			$o->fetch($obj->rowid);
-			$Tab[] = array(
-				'link'=>$o->getNomUrl(1)
-				,'link0'=>$o->getNomUrl(0)
-				,'type'=>'societe'
-			) ;
-		}
-
-        if (!$trouve)
-        {
-            $res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
-            while ($obj = $db->fetch_object($res))
-            {
-                $o = new Societe($db);
-                $o->fetch($obj->rowid);
-                $Tab[] = array(
-                    'link' => $o->getNomUrl(1)
-                    , 'link0' => $o->getNomUrl(0)
-                    , 'type' => 'societe'
-                );
-            }
-
-        }
-
+		$skip_company_search = false;
         if (strpos($tag, '|') !== false)
         {
+            // Si on passe par là, c'est uqu'il s'agit obligatoirement d'un contact
+            $skip_company_search = true;
+
             $TInfo = explode('|', $tag);
             $TInfo[1] = explode('_', $TInfo[1]);
             $TInfo[1] = $TInfo[1][0];
@@ -84,12 +58,46 @@
         $code = $TInfo[0];
         $nom = $TInfo[1];
 
+        if (!$skip_company_search)
+        {
+            $res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$db->escape($code)."'");
+
+            $trouve = false;
+            while ($obj = $db->fetch_object($res))
+            {
+                $trouve = true;
+                $o = new Societe($db);
+                $o->fetch($obj->rowid);
+                $Tab[] = array(
+                    'link' => $o->getNomUrl(1)
+                    , 'link0' => $o->getNomUrl(0)
+                    , 'type' => 'societe'
+                );
+            }
+
+            if (!$trouve)
+            {
+                $res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($code)."%'");
+                while ($obj = $db->fetch_object($res))
+                {
+                    $o = new Societe($db);
+                    $o->fetch($obj->rowid);
+                    $Tab[] = array(
+                        'link' => $o->getNomUrl(1)
+                        , 'link0' => $o->getNomUrl(0)
+                        , 'type' => 'societe'
+                    );
+                }
+
+            }
+        }
+
+
+
 		$sql = "SELECT p.rowid 
 					FROM ".MAIN_DB_PREFIX."socpeople p LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
 					WHERE (s.code_client = '".$db->escape($code)."' OR s.nom='".$db->escape($code)."' ) AND p.lastname='".$db->escape($nom)."'";
         $res = $db->query($sql);
-
-//        echo($sql);exit;
 
 		while($obj = $db->fetch_object($res)) {
 			$o=new Contact($db);
