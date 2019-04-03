@@ -12,9 +12,8 @@
 	
 	$tag = GETPOST('tag');
 	$type_tag = GETPOST('type_tag');
-	
+
 	if($type_tag == 'user') {
-		
 		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE login = '".$db->escape($tag)."'");
 		while($obj = $db->fetch_object($res)) {
 			$o=new User($db);
@@ -55,26 +54,43 @@
 			) ;
 		}
 
-		if(!$trouve) {
-		$res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
-		while($obj = $db->fetch_object($res)) {
-			$o=new Societe($db);
-			$o->fetch($obj->rowid);
-			$Tab[] = array(
-				'link'=>$o->getNomUrl(1)
-				,'link0'=>$o->getNomUrl(0)
-				,'type'=>'societe'
-			) ;
-		}
-			
-		}
-		
-		list($code, $nom) = explode('_', $tag);
-	
-		$res = $db->query("SELECT p.rowid 
+        if (!$trouve)
+        {
+            $res = $db->query("SELECT rowid  FROM ".MAIN_DB_PREFIX."societe WHERE nom LIKE '".$db->escape($tag)."%'");
+            while ($obj = $db->fetch_object($res))
+            {
+                $o = new Societe($db);
+                $o->fetch($obj->rowid);
+                $Tab[] = array(
+                    'link' => $o->getNomUrl(1)
+                    , 'link0' => $o->getNomUrl(0)
+                    , 'type' => 'societe'
+                );
+            }
+
+        }
+
+        if (strpos($tag, '|') !== false)
+        {
+            $TInfo = explode('|', $tag);
+            $TInfo[1] = explode('_', $TInfo[1]);
+            $TInfo[1] = $TInfo[1][0];
+
+            // Si ce n'est pas un code, mais le nom de la société, dol_string_nospecial est passé par là. Ceci ne garantie en rien de pouvoir retrouver la bonne société et la bonne personne dans 100% des cas
+            $TInfo[0] = str_replace('_', ' ', $TInfo[0]);
+        }
+        else $TInfo = explode('_', $tag); // Keep this for backward compatibility
+
+        $code = $TInfo[0];
+        $nom = $TInfo[1];
+
+		$sql = "SELECT p.rowid 
 					FROM ".MAIN_DB_PREFIX."socpeople p LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
-					WHERE (s.code_client = '".$db->escape($code)."' OR s.nom='".$db->escape($code)."' ) AND p.lastname='".$db->escape($nom)."'");
-					
+					WHERE (s.code_client = '".$db->escape($code)."' OR s.nom='".$db->escape($code)."' ) AND p.lastname='".$db->escape($nom)."'";
+        $res = $db->query($sql);
+
+//        echo($sql);exit;
+
 		while($obj = $db->fetch_object($res)) {
 			$o=new Contact($db);
 			$o->fetch($obj->rowid);
@@ -185,7 +201,7 @@
 		}
 		
 	}
-	
+
 	if(count($Tab) == 1) {
 		preg_match_all('/<a[^>]+href=([\'"])(.+?)\1[^>]*>/i', $Tab[0]['link0'], $match);
 		

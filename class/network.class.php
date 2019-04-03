@@ -5,7 +5,7 @@ class TNetMsg extends TObjetStd{
  * Ordre de fabrication d'équipement
  * */
  	static $regex_hashtag = '/#((\\w|-)+)/';
-	static $regex_arobase = '/@((\\w|-)+)/';
+	static $regex_arobase = '/@((\\w|-|\\|)+)/';
 	static $regex_colon =   '/:((\\w|-)+)/';
  
  	function __construct() {
@@ -25,7 +25,7 @@ class TNetMsg extends TObjetStd{
 		
 	}
 	
-	function getNomUrl() {
+	function getNomUrl($addclass='') {
 		global $db;
 		
 		$type= $this->type_object;
@@ -47,10 +47,15 @@ class TNetMsg extends TObjetStd{
 			if($o->fetch($this->fk_object)>0) {
 				
 				if(method_exists($o, 'getNomUrl')) {
-					return $o->getNomUrl(1);
+					$link = $o->getNomUrl(1);
+                    if (!empty($link))
+                    {
+                        $link = preg_replace('/class="/', 'class="'.$addclass.' ', $link, 1);
+                    }
+					return $link;
 				}
 				else if($o->element == 'usergroup') {
-					$link = '<a href="'.dol_buildpath('/user/group/card.php?id='.$o->id,1).'">'.$o->name.'</a>';
+					$link = '<a class="'.$addclass.'" href="'.dol_buildpath('/user/group/card.php?id='.$o->id,1).'">'.$o->name.'</a>';
 					return $link;
 				}
 			}
@@ -107,7 +112,7 @@ class TNetMsg extends TObjetStd{
 			
 			$soc=new Societe($db);
 			$soc->fetch($object->socid);
-			$ref = TNetMsg::simpleString(( !empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'_'.$object->lastname);
+			$ref = TNetMsg::simpleString(( !empty( $soc->code_client ) ? $soc->code_client : $soc->name ).'|'.$object->lastname);
 		}
 		else if($object->element == 'user' && !empty($object->login)) $ref = $object->login;
 		else if($object->element == 'usergroup' && !empty($object->name)) $ref = self::simpleString($object->name);
@@ -120,9 +125,33 @@ class TNetMsg extends TObjetStd{
 	
 	static function simpleString($s) {
 		
-		return dol_string_unaccent(dol_string_nospecial($s));
+		return dol_string_unaccent(self::dol_string_nospecial($s));
 		
 	}
+
+    /**
+     * Copié/Collé dol_string_nospecial() dans functions.lib.php
+     *
+     *	Clean a string from all punctuation characters to use it as a ref or login.
+     *  This is a more complete function than dol_sanitizeFileName.
+     *
+     *	@param	string	$str            	String to clean
+     * 	@param	string	$newstr				String to replace forbidden chars with
+     *  @param  array	$badcharstoreplace  List of forbidden characters
+     * 	@return string          			Cleaned string
+     *
+     * 	@see    		dol_sanitizeFilename, dol_string_unaccent
+     */
+	public static function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
+    {
+//        $forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°');  // more complete than dol_sanitizeFileName
+        $forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "[", "]", ",", ";", "=", '°');  // more complete than dol_sanitizeFileName
+        $forbidden_chars_to_remove=array();
+        if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
+        //$forbidden_chars_to_remove=array("(",")");
+
+        return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
+    }
 	
 	static function getRef($fk_object, $type_object) {
 		global $db;
