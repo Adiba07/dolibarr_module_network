@@ -50,8 +50,6 @@
             $TInfo[1] = explode('_', $TInfo[1]);
             $TInfo[1] = $TInfo[1][0];
 
-            // Si ce n'est pas un code, mais le nom de la société, dol_string_nospecial est passé par là. Ceci ne garantie en rien de pouvoir retrouver la bonne société et la bonne personne dans 100% des cas
-            $TInfo[0] = str_replace('_', ' ', $TInfo[0]);
         }
         else $TInfo = explode('_', $tag); // Keep this for backward compatibility
 
@@ -93,10 +91,9 @@
         }
 
 
-
 		$sql = "SELECT p.rowid 
 					FROM ".MAIN_DB_PREFIX."socpeople p LEFT JOIN ".MAIN_DB_PREFIX."societe s ON (p.fk_soc=s.rowid)
-					WHERE (s.code_client = '".$db->escape($code)."' OR s.nom='".$db->escape($code)."' ) AND p.lastname='".$db->escape($nom)."'";
+					WHERE (s.code_client = '".$db->escape($code)."' OR s.nom LIKE '".$db->escape($code)."' ) AND p.lastname='".$db->escape($nom)."'";
         $res = $db->query($sql);
 
 		while($obj = $db->fetch_object($res)) {
