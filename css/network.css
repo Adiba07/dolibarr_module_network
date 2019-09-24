@@ -1,83 +1,131 @@
-#twittor-panel {
+/*
+ * Copyright (C) 2019 ATM Consulting <support@atm-consulting.fr>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#network-container {
+    clear: both;
+    padding: 15px 12px 0 20px;
+}
+
+#network-panel {
     float: none;
-    clear:both;
-    margin:10px 12px 0 20px;
+    clear: both;
 }
-#twittor-panel div[rel=header], #twittor-panel div[rel=current_object], #twittor-panel div[rel=add_comment] {
-	float:left;
-	width:10%;
-	height:50px;
-        font-size:14px;
+
+#network-header, #network-current-object, #network-add-comment {
+    float: left;
+    width: 10%;
+    font-size: 1.1em;
 }
-#twittor-panel div[rel=current_object] {
-    color:#727272;
+
+#network-current-object {
+    color: #727272;
 }
-#twittor-panel div[rel=writer] {
-	float:left;
-	width:70%;
-	height:50px;
+
+#network-writer {
+    float: left;
+    width: 65%;
 }
-#twittor-panel div[rel=writer] input[type=text] {
-	
-	width:95%;
-	
+
+#network-writer input[type=text] {
+    width: 40%;
 }
-#twittor-panel div[rel=writer] input[type=button] {
-	width:20%;
-	margin-left:10px;
+
+#network-writer input[name=network_link] {
+    margin-right: 5%;
+    width: 20%;
 }
-#twittor-panel div.comments {
-	clear:both;
+
+#network-writer input[type=button] {
+    width: 20%;
+    margin-left: 10px;
 }
-#twittor-panel div.comm {
-	
-	/*background-image: linear-gradient(to bottom, #e8e8e8 0px, #f5f5f5 100%);
+
+#network-comments {
+    clear: both;
+}
+
+#network-comments div.comm {
+
+    /*background-image: linear-gradient(to bottom, #e8e8e8 0px, #f5f5f5 100%);
     background-repeat: repeat-x;*/
     border-bottom: 1px solid #dcdcdc;
-    
-	padding: 10px 3px;	
-	
-	
-}
-#twittor-panel div.comm:nth-child(odd) {
-	background-color: #eee;
-}
-#twittor-panel div.comm div.date {
-	font-size:9px;
-	color:#a5a5a5;
-	text-align: right;
-	float:right;
-}
-#twittor-panel div.comm div.delete {
-	float:right;
+
+    padding: 10px 3px;
+
+
 }
 
-#twittor-panel div.comm div.object  {
-	display:inline;
-	margin-right:5px;
-	background: #4963ff;
-	border-radius: 3px;
-	padding:1px 3px;
-	
+#network-comments div.comm:nth-child(odd) {
+    background-color: #eee;
 }
 
-a.network_badge.object {
-	background-color: #13961A;
+#network-comments div.comm div.date {
+    font-size: 12px;
+    color: #a5a5a5;
+    text-align: right;
+    float: right;
 }
-a.network_badge.rel {
-	background-color: #9A3BF9;
+
+#network-comments div.comm div.delete {
+    float: right;
 }
-a.network_badge.user {
+
+#network-comments div.comm div.object {
+    display: inline;
+    margin-right: 5px;
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+/*div.network_badge.origin-element a {*/
+/*	color:#FFF !important;*/
+/*	font-size:13px;*/
+/*	padding:5px 6px;*/
+/*	text-decoration: none;*/
+/*	border-radius: 10px;*/
+/*}*/
+
+#network-comments .network_badge.object {
+    background-color: #13961A;
+}
+
+#network-comments .network_badge.rel {
+    background-color: #9A3BF9;
+}
+
+#network-comments .network_badge.user {
     background-color: #3F538C;
 }
 
-a.network_badge {
-    color:#FFF !important;
-    font-size:13px;
-    padding:5px 6px;
+#network-comments .network_badge {
+    color: #FFF !important;
+    font-size: 13px;
+    padding: 5px 6px;
     text-decoration: none;
 }
 
-a.network_badge:hover {
-    box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+#network-comments .network-badge-link {
+    margin-right: 8px;
+}
+
+#network-comments .network_badge.origin-element {
+    background: #4963ff;
+}
+
+#network-comments .network_badge:hover {
+    box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60, 60, 60, 0.1);
 }

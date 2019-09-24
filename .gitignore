@@ -1,2 +1,5 @@
-/nbproject
-/.project
+.buildpath
+.project
+.settings/
+*.log
+/nbproject/private/

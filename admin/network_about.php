@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+/**
+ * Copyright (C) @@YEAR@@ ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+$res = @include '../../main.inc.php'; // From htdocs directory
 if (! $res) {
-    $res = @include("../../../main.inc.php"); // From "custom" directory
+    $res = @include '../../../main.inc.php'; // From "custom" directory
 }
 
 // Libraries
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once '../lib/network.lib.php';
 
 // Translations
-$langs->load("network@network");
+$langs->load('network@network');
 
 // Access control
 if (! $user->admin) {
@@ -43,20 +43,20 @@ if (! $user->admin) {
 /*
  * View
  */
-$page_name = "networkAbout";
+$page_name = 'NetworkAbout';
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-    . $langs->trans("BackToModuleList") . '</a>';
-print_fiche_titre($langs->trans($page_name), $linkback);
+    . $langs->trans('BackToModuleList') . '</a>';
+print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = networkAdminPrepareHead();
 dol_fiche_head(
     $head,
     'about',
-    $langs->trans("ModuleName"),
+    $langs->trans('Module900000092Name'),
     0,
     'network@network'
 );
@@ -67,10 +67,9 @@ print '<div>'.$langs->trans('ATMAbout').'</div>';
 
 dol_fiche_end();
 
-print '<br><center>';
+print '<br><div class="center">';
 print '<a href="http://www.atm-consulting.fr" target="_blank"><img src="../img/ATM_logo.jpg" /></a>';
-print '</center>';
+print '</div>';
 
 llxFooter();
-
 $db->close();

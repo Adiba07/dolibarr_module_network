@@ -1,398 +1,172 @@
 <?php
+/**
+ * Copyright (C) @@YEAR@@ ATM Consulting <support@atm-consulting.fr>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-	require('../config.php');
-	dol_include_once('/network/class/network.class.php');
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-	
-	if(empty($user->rights->network->read)) exit; // pas les droit de lecture
+require '../config.php';
+dol_include_once('/network/class/network.class.php');
 
-	$langs->load('network@network');
+$langs->load('network@network');
 
-	$element_tag = NetMsg::getTag(GETPOST('element'), GETPOST('ref'));
-	
+$fk_source = (int) GETPOST('fk_source');
+$sourcetype = GETPOST('sourcetype');
 ?>
-var cache = [];
 
 $(document).ready(function() {
-	var html = '<div class="tabBar">';
-			html+= '<div rel="header"><p>';
-				html+= '<a href="javascript:showSociogram();"><img src="<?php echo dol_buildpath('/network/img/users_relation.png',1) ?>" border="0" align="absmiddle" /></a>';
-				html+= '&nbsp;<b><?php echo $langs->trans('Network') ?></b> <span id="network_span_to_help"></span>';
-			html+= '</p></div>';
-			html+= '<div rel="current_object"><p class="align-right"><b><?php echo $element_tag; ?> : </b></p></div>';
-			html+= '<div rel="writer"></div>';
-			html+= '<div rel="add_comment"></div>';
-		html+= '</div>';
 
-	var $div = $(html);
-	$div.attr('id','twittor-panel');
-	
-	$div.find('#network_span_to_help').append(<?php echo json_encode(Form::textwithtooltip('', $langs->trans('networkHowToUse'), 2, 1, '<span class="fa fa-question-circle" aria-hidden="true"></span>', 'networkHelp', 2)); ?>);
-	
+
+    $('#network-container').appendTo('#id-right');
+
 	<?php
-	
-	if(!empty($user->rights->network->write)) {
-		
-	?>
-	
-	var $writer = $div.find('[rel=writer]');
-	$writer.append('<p><input type="text" name="comment" maxlength="140" placeholder="Saisissez une relation (140car. max.)" /></p>');
-	$writer.find('input[name=comment]').keypress(function(e) {
-		if(e.which == 13) {
-	        addComment();
-	    }
-	});
-	
-	var $button = $('<input type="button" name="btcomment" class="button butAction" value="<?php echo $langs->trans('CreateTwiiit') ?>">');
-	$button.click(function() {
-		
-		addComment();
-		
-	});
-	
-	function addComment() {
-		var comment = $('#twittor-panel input[name=comment]').val();
-		
-		if(comment.trim() == '') return false;
-		
-		$.ajax({
-			url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
-			,data:{ 
-		      		put:"comment"
-		      		,comment:comment
-		      		, element:"<?php echo GETPOST('element') ?>"
-		      		, ref:"<?php echo GETPOST('ref') ?>"
-		      		, id:<?php echo GETPOST('id') ?> 
-		     }
-		     ,method:'post'
-		}).done(function (data) { 
-			NetworkLoadComment(); 
-			$('#twittor-panel input[name=comment]').val("");
-		});
-			
-	}
-	
-	$div.find('[rel=add_comment]').append($button);
-	
-	<?php
-	}
-	
-	?>
-	
-	$div.append('<div class="comments"></div>');
-	
-	$('#id-right').append($div);
-	
-	NetworkLoadComment();
-	
-	setTextTag();
-	
-});
-var sysArbor = null;
-function getEdge(ref, element, id) {
-	
-	$.ajax({
-		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
-		,data:{ 
-	      		get:"graph"
-	      		, element:element
-	      		, ref:ref
-	      		, id:id
-	     }
-	     ,method:'get'
-	     ,dataType:'json'
-	}).done(function (data) { 
-		
-		for (x in data) {
-			edge = data[x];
-			if(edge.from.length>1 && edge.to.length>1) {
-				console.log(edge);
-				sysArbor.addEdge(edge.from,edge.to,{label:edge.label});	
+    if (!empty($user->rights->network->write)) {
+    ?>
+        var $button = $('#network-add-comment input[name=btcomment]').click(function () {
+            addComment();
+        });
 
-			}
-			
-		}
-		
-	});
-	
-}
+        function addComment() {
+            var link = $('#network-writer input[name=network_link]').val();
+            var target = $('#network-writer input[name=network_target]').val();
 
-function showSociogram() {
-	
-	$('#sociogram').remove();
-	
-	$('body').append('<div id="sociogram"><canvas width="800" height="600"></canvas></div>');
-	
-	$("#sociogram").dialog({
-		title:"Sociogram"
-		,modal:true
-		,width:800
-		
-	});
+            $.ajax({
+                url: '<?php echo dol_buildpath('/network/script/interface.php', 1); ?>'
+                , dataType: "JSON"
+                , data: {
+                    action: "addComment"
+                    , link: link
+                    , json: 1
+                    , fk_source: <?php echo $fk_source; ?>
+                    , sourcetype: "<?php echo $sourcetype; ?>"
+                    , target: target
+                }
+                , method: 'POST'
+            }).done(function (data) {
+                NetworkLoadComment();
+                $('#network-writer input[name=network_link]').val("");
+                $('#network-writer input[name=network_target], #network-writer input[name=search_network_target]').val("");
+            });
 
-	sysArbor = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
-    	sysArbor.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
-    	sysArbor.renderer = Renderer("#sociogram canvas") // our newly created renderer will have its .init() method called shortly by sys...
-
-	getEdge("<?php echo GETPOST('ref') ?>", "<?php echo GETPOST('element') ?>", <?php echo GETPOST('id') ?>);
-
-}
-
-var Renderer = function(canvas){
-    var canvas = $(canvas).get(0)
-    var ctx = canvas.getContext("2d");
-    var particleSystem
-
-	var imgUser = new Image;
-	imgUser.src = "<?php echo dol_buildpath("/network/img/user.png",1) ?>";
-
-	var imgDoc = new Image;
-	imgDoc.src = "<?php echo dol_buildpath("/network/img/doc.png",1) ?>";
-
-    var that = {
-      init:function(system){
-       particleSystem = system
-        particleSystem.screenSize(canvas.width, canvas.height) 
-        particleSystem.screenPadding(80) // leave an extra 80px of whitespace per side
-        that.initMouseHandling()
-      },
-      
-      redraw:function(){
-        ctx.fillStyle = "white"
-        ctx.fillRect(0,0, canvas.width, canvas.height)
-        
-        particleSystem.eachEdge(function(edge, pt1, pt2){
-          // edge: {source:Node, target:Node, length:#, data:{}}
-          // pt1:  {x:#, y:#}  source position in screen coords
-          // pt2:  {x:#, y:#}  target position in screen coords
-
-          // draw a line from pt1 to pt2
-          ctx.save();
-          
-          if(edge.source.name[0] == '#' || edge.target.name[0] == '#') {
-          	ctx.strokeStyle = "rgba(0,100,100, 1)";
-            ctx.lineWidth = 2
-          }
-          else {
-          	ctx.setLineDash([5, 15]);	
-          	ctx.strokeStyle = "rgba(0,100,0, 1)";
-          	ctx.lineWidth = 1
-          }
-          
-
-          ctx.beginPath();
-          //ctx.moveTo(pt1.x, pt1.y);
-          //
-          
-          ctx.moveTo( pt1.x + ( Math.sign( pt2.x - pt1.x ) * 10 ), pt1.y + (Math.sign(pt2.y - pt1.y)  * 10) ); 
-          ctx.lineTo(pt2.x - ( Math.sign( pt2.x - pt1.x ) * 10 ), pt2.y - (Math.sign(pt2.y - pt1.y)  * 10));
-          
-          ctx.stroke();
-          
-          ctx.restore();
-          
-          ctx.font = "20px Arial";
-          ctx.fillStyle = "orange";
-		  ctx.textAlign = "center";
-		  ctx.fillText(edge.data.label, pt1.x + ((pt2.x - pt1.x) / 2), pt1.y + ((pt2.y - pt1.y) / 2) );
-          
-        })
-
-        particleSystem.eachNode(function(node, pt){
-          // node: {mass:#, p:{x,y}, name:"", data:{}}
-          // pt:   {x:#, y:#}  node position in screen coords
-
-		  
-		  var w = 50;
-		  
-		  if(node.name[0] == "#") {
-		  	
-		  	 
-		  	  ctx.drawImage(imgDoc, pt.x -w/2, pt.y - 80);
-		  	  ctx.font = "25px Arial";  
-		  	  ctx.fillStyle = "green";			
-		  }
-		  else {
-		      ctx.drawImage(imgUser, pt.x -w/2, pt.y - 70);
-          	  ctx.font = "20px Arial";
-          	  ctx.fillStyle = "blue";
-		  }
-
-          // draw a rectangle centered at pt
-          //
-          //ctx.fillStyle = (node.data.alone) ? "orange" : "black"
-          //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)*/
-          
-		  ctx.textAlign = "center";
-          ctx.fillText(node.name, pt.x, pt.y);
-        })    			
-      },
-      
-      initMouseHandling:function(){
-        // no-nonsense drag and drop (thanks springy.js)
-        var dragged = null;
-
-        // set up a handler object that will initially listen for mousedowns then
-        // for moves and mouseups while dragging
-        var handler = {
-          clicked:function(e){
-            var pos = $(canvas).offset();
-            _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
-            dragged = particleSystem.nearest(_mouseP);
-
-            if (dragged && dragged.node !== null){
-              // while we're dragging, don't let physics move the node
-              dragged.node.fixed = true
-            }
-
-            $(canvas).bind('mousemove', handler.dragged)
-            $(window).bind('mouseup', handler.dropped)
-
-            return false
-          },
-          dragged:function(e){
-            var pos = $(canvas).offset();
-            var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
-
-            if (dragged && dragged.node !== null){
-              var p = particleSystem.fromScreen(s)
-              dragged.node.p = p
-            }
-
-            return false
-          },
-
-          dropped:function(e){
-            if (dragged===null || dragged.node===undefined) return
-            if (dragged.node !== null) dragged.node.fixed = false
-            dragged.node.tempMass = 1000
-            dragged = null
-            $(canvas).unbind('mousemove', handler.dragged)
-            $(window).unbind('mouseup', handler.dropped)
-            _mouseP = null
-            return false
-          }
         }
-        
-        // start listening
-        $(canvas).mousedown(handler.clicked);
 
-      },
-      
+	<?php
     }
-    return that
-  }    
+	?>
 
+    <?php
+    if (!empty($user->rights->network->read)) {
+    ?>
+        NetworkLoadComment();
+    <?php
+    }
+    ?>
+});
 
-function NetworkLoadComment(start) {
-	
-	if(!start) start = 0;
-	
-	$.ajax({
-		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
-		,data:{ 
-	      		get:"comments"
-	      		, element:"<?php echo GETPOST('element') ?>"
-	      		, ref:"<?php echo GETPOST('ref') ?>"
-	      		, id:<?php echo GETPOST('id') ?> 
-	      		, start : start
-	     }	
-	}).done(function (data) { 
-		
-		if(start>0) {
-			$('#twittor-panel div.comments div.showMore').remove();
-			$('#twittor-panel div.comments').append(data);
-		}
-		else{
-			$('#twittor-panel div.comments').html(data);	
-		}
-		
-		 
-	});
-	      
-	
+<?php
+if (!empty($user->rights->network->read)) {
+?>
+    function NetworkLoadComment(start, limit) {
+        if (!start) start = 0;
+        if (!limit) limit = 10;
+
+        $.ajax({
+            url: '<?php echo dol_buildpath('/network/script/interface.php', 1) ?>'
+            , dataType: 'JSON'
+            , data: {
+                action: "getComments"
+                , json: 1
+                , fk_source: <?php echo $fk_source; ?>
+                , sourcetype: "<?php echo $sourcetype; ?>"
+                , start: start
+                , limit: limit
+            }
+        }).done(function (data) {
+            if (start > 0) {
+                $('#network-comments div.showMore').remove();
+                NetworkAddCommentsIntoDOM(data, start, limit, false);
+            } else {
+                NetworkAddCommentsIntoDOM(data, start, limit, true);
+            }
+        });
+    }
+
+    function NetworkAddCommentsIntoDOM(data, start, limit, setempty)
+    {
+        if (typeof data !== 'undefined')
+        {
+            if (setempty) $('#network-comments').empty();
+
+            for (let i in data) {
+                if (i >= limit) {
+                    $('#network-comments').append('<div class="comm showMore" start="'+start+'" limit="'+limit+'" style="text-align:center"><a href="javascript:;" onclick="NetworkLoadComment('+(start + limit)+')">&#x25BC; <?php echo dol_escape_js($langs->trans('NetworkShowMore')); ?> &#x25BC;</a></div>');
+                    break;
+                } else {
+                    let $comment = $('<div id="network-comment-'+data[i].rowid+'" class="comm" commid="'+data[i].rowid+'">');
+
+                    $comment.append('<span class="rel badge network_badge network-badge-link">'+data[i].link+'</span>');
+
+                    $comment.append(data[i].url);
+
+                    <?php
+                    if (!empty($user->rights->network->delete)) {
+                    ?>
+                        $comment.append('<div class="delete"><a href="javascript:networkRemoveComment('+data[i].rowid+')"><?php echo img_delete(); ?></a></div>');
+                    <?php
+                    }
+                    ?>
+
+                    $comment.append('<div class="date">'+data[i].author+' - '+data[i].date+'</div>');
+
+                    if ($comment.find('.classfortooltip').length > 0) {
+                        // Copy of ajaxdirtree.php
+                        $comment.find('.classfortooltip').tooltip({
+                            show: { collision: "flipfit", effect:'toggle', delay:50 },
+                            hide: { delay: 50 }, 	/* If I enable effect:'toggle' here, a bug appears: the tooltip is shown when collpasing a new dir if it was shown before */
+                            tooltipClass: "mytooltip",
+                            content: function () {
+                                return $(this).prop('title');		/* To force to get title as is */
+                            }
+                        });
+                    }
+
+                    $('#network-comments').append($comment);
+                }
+            }
+        }
+    }
+<?php
 }
+?>
 
-function networkRemoveComment(commid) {
-	if(window.confirm("Etes-vous sûr ?")) {
-		$.ajax({
-		url : '<?php echo dol_buildpath('/network/script/interface.php',1) ?>'
-		,data:{ 
-	      		put:"remove-comment"
-	      		, id:commid
-	     }	
-		}).done(function (data) { 
-			$('div.comments div.comm[commid='+commid+']').remove();	
-		});
-		
-		
-		
-	}	
-}
-
-function setTextTag() {
-	
-	$('#twittor-panel input[name=comment]').textcomplete([
-	  { // mention strategy
-	    match: /(^|\s)@(\w*)$/,
-	    search: function (term, callback) {
-	    	
-	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
-	      		q: term
-	      		,get:"search-user"
-	      		, element:"<?php echo GETPOST('element') ?>"
-	      		, ref:"<?php echo GETPOST('ref') ?>"
-	      		, id:<?php echo GETPOST('id') ?> 
-	      	})
-	        .done(function (resp) { callback(resp); })
-	        .fail(function ()     { callback([]);   });
-	    },
-	    replace: function (value) {
-	      return '$1@' + value + ' ';
-	    },
-	    cache: true
-	  }
-	  ,{ // mention strategy
-	    match: /(^|\s):(\w*)$/,
-	    search: function (term, callback) {
-	    	
-	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
-	      		q: term
-	      		,get:"search-tag"
-	      		, element:"<?php echo GETPOST('element') ?>"
-	      		, ref:"<?php echo GETPOST('ref') ?>"
-	      		, id:<?php echo GETPOST('id') ?> 
-	      	})
-	        .done(function (resp) { callback(resp); })
-	        .fail(function ()     { callback([]);   });
-	    },
-	    replace: function (value) {
-	      return '$1:' + value + ' ';
-	    },
-	    cache: true
-	  }
-	  ,{ // mention strategy
-	    match: /(^|\s)#(\w*)$/,
-	    search: function (term, callback) {
-	    	
-	      //callback(cache[term], true);
-	      $.getJSON('<?php echo dol_buildpath('/network/script/interface.php',1) ?>', { 
-	      		q: term
-	      		,get:"search-element"
-	      		, element:"<?php echo GETPOST('element') ?>"
-	      		, ref:"<?php echo GETPOST('ref') ?>"
-	      		, id:<?php echo GETPOST('id') ?> 
-	      	})
-	        .done(function (resp) { callback(resp); })
-	        .fail(function ()     { callback([]);   });
-	    },
-	    replace: function (value) {
-	      return '$1#' + value + ' ';
-	    },
-	    cache: true
-	  }
-	], { maxCount: 20, debounce: 500 });
-
+<?php
+if (!empty($user->rights->network->delete)) {
+?>
+    function networkRemoveComment(commid) {
+        if (window.confirm("<?php echo dol_escape_js($langs->transnoentitiesnoconv('NetworkComfirmDelete')) ?>")) {
+            $.ajax({
+                url: '<?php echo dol_buildpath('/network/script/interface.php', 1); ?>'
+                , dataType: "JSON"
+                , data: {
+                    action: "deleteComment"
+                    , json: 1
+                    , id: commid
+                }
+            }).done(function (data) {
+                $('#network-comment-' + commid).remove();
+            });
+        }
+    }
+<?php
 }

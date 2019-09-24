@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+/**
+ * Copyright (C) @@YEAR@@ ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,18 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+$res = @include '../../main.inc.php'; // From htdocs directory
 if (! $res) {
-    $res = @include("../../../main.inc.php"); // From "custom" directory
+    $res = @include '../../../main.inc.php'; // From "custom" directory
 }
 
 // Libraries
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once '../lib/network.lib.php';
+dol_include_once('abricot/includes/lib/admin.lib.php');
 
 // Translations
-$langs->load("network@network");
+$langs->loadLangs(array('network@network', 'admin', 'other'));
 
 // Access control
 if (! $user->admin) {
@@ -46,7 +47,7 @@ $action = GETPOST('action', 'alpha');
 /*
  * Actions
  */
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_(.*)/', $action, $reg))
 {
 	$code=$reg[1];
 	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
@@ -60,7 +61,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 	
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_(.*)/', $action, $reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
@@ -77,21 +78,21 @@ if (preg_match('/del_(.*)/',$action,$reg))
 /*
  * View
  */
-$page_name = "networkSetup";
+$page_name = "NetworkSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
     . $langs->trans("BackToModuleList") . '</a>';
-print_fiche_titre($langs->trans($page_name), $linkback);
+print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = networkAdminPrepareHead();
 dol_fiche_head(
     $head,
     'settings',
-    $langs->trans("ModuleName"),
-    0,
+    $langs->trans("Module900000092Name"),
+    -1,
     "network@network"
 );
 
@@ -99,37 +100,34 @@ dol_fiche_head(
 $form=new Form($db);
 $var=false;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
-/*
+
+if(!function_exists('setup_print_title')){
+    print '<div class="error" >'.$langs->trans('AbricotNeedUpdate').' : <a href="http://wiki.atm-consulting.fr/index.php/Accueil#Abricot" target="_blank"><i class="fa fa-info"></i> Wiki</a></div>';
+    exit;
+}
+
+setup_print_title("Parameters");
+
 // Example with a yes / no select
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("ParamLabel").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="300">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_CONSTNAME">';
-print $form->selectyesno("CONSTNAME",$conf->global->CONSTNAME,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print '</td></tr>';
-*/
+setup_print_on_off('CONSTNAME', $langs->trans('ParamLabel'), 'ParamDesc');
 
+// Example with imput
+setup_print_input_form_part('CONSTNAME', $langs->trans('ParamLabel'));
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>Pas de paramètre</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="300">';
-print 'Rendez-vous sur des fiches pour créer des liens. @ pour un tiers,contact ou utilisateur, : pour le type de relation, #pour un objet type propale, projet, etc. Ex : @Alexis est :ami @Thibaud  ';
-print '</td></tr>';
+// Example with color
+setup_print_input_form_part('CONSTNAME', $langs->trans('ParamLabel'), 'ParamDesc', array('type'=>'color'), 'input', 'ParamHelp');
+
+// Example with placeholder
+//setup_print_input_form_part('CONSTNAME',$langs->trans('ParamLabel'),'ParamDesc',array('placeholder'=>'http://'),'input','ParamHelp');
+
+// Example with textarea
+//setup_print_input_form_part('CONSTNAME',$langs->trans('ParamLabel'),'ParamDesc',array(),'textarea');
+
 
 print '</table>';
+
+dol_fiche_end(-1);
 
 llxFooter();
 
