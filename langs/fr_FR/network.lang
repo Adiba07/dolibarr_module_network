@@ -30,3 +30,16 @@ network_error_empty_target=Erreur : l'élément cible n'est pas renseigné
 network_error_empty_source=Erreur : l'élément source n'est pas renseigné
 network_error_create_comment=Erreur : échec de l'ajout (%s)
 network_error_delete_comment=Erreur : échec de la suppression (%s)
+
+# TITLE AUTOCOMPLETE
+NetworkItemTitleUser=Utilisateurs
+NetworkItemTitleUserGroup=Groupes d'utilisateurs
+NetworkItemTitleSociete=Sociétés
+NetworkItemTitleContact=Contacts
+NetworkItemTitlePropal=Propositions commerciales
+NetworkItemTitleCommande=Commandes
+NetworkItemTitleFacture=Factures
+NetworkItemTitleSupplierProposal=Demandes de prix fournisseur
+NetworkItemTitleCommandeFournisseur=Commandes fournisseur
+NetworkItemTitleFactureFournisseur=Factures fournisseur
+NetworkItemTitleProject=Opportunités | Projets

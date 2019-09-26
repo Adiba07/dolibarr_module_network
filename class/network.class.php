@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 class Network extends SeedObject
 {
@@ -265,13 +266,14 @@ class Network extends SeedObject
 
     public function getSearchResult($queryString)
     {
-        global $conf;
+        global $conf, $langs;
 
         $TRes = array();
 
         // @ = user / usergroup / societe / contact
         // # = propal / commande / facture ...
         // si aucun des 2, alors de partout
+        // TODO pour chaque ajout d'élément ici, il faudra inclure la class tout en haut de ce fichier et ajouter la clé de traduction issue de la concaténation de la chaine "NetworkItemTitle" + type de l'élément
         $TTableSearchAvailable = array(
             '@' => array(
                 'user' => array(
@@ -279,28 +281,28 @@ class Network extends SeedObject
                     ,'fields' => array('lastname', 'firstname')
                     ,'use_natural_search' => true
                     ,'entity' => true
-                    ,'type' => 'User'
+                    ,'type' => 'User' // Représente le nom de la class
                 )
                 ,'usergroup' => array(
                     'select' => 'nom AS label'
                     ,'fields' => array('nom')
                     ,'use_natural_search' => true
                     ,'entity' => true
-                    ,'type' => 'UserGroup'
+                    ,'type' => 'UserGroup' // Représente le nom de la class
                 )
                 ,'societe' => array(
                     'select' => 'CONCAT(code_client, \' \', nom) AS label'
                     ,'fields' => array('code_client', 'nom')
                     ,'use_natural_search' => true
                     ,'entity' => true
-                    ,'type' => 'Societe'
+                    ,'type' => 'Societe' // Représente le nom de la class
                 )
                 ,'socpeople' => array(
                     'select' => empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'CONCAT(lastname, \' \', firstname) AS label' : 'CONCAT(firstname, lastname) AS label'
                     ,'fields' => array('lastname', 'firstname')
                     ,'use_natural_search' => true
                     ,'entity' => true
-                    ,'type' => 'Contact'
+                    ,'type' => 'Contact' // Représente le nom de la class
                 )
             )
             ,'#' => array(
@@ -309,42 +311,50 @@ class Network extends SeedObject
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'Propal'
+                    ,'type' => 'Propal' // Représente le nom de la class
                 )
                 ,'commande' =>  array(
                     'select' => 'ref AS label'
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'Commande'
+                    ,'type' => 'Commande' // Représente le nom de la class
                 )
                 ,'facture' =>  array(
                     'select' => 'ref AS label'
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'Facture'
+                    ,'type' => 'Facture' // Représente le nom de la class
                 )
                 ,'supplier_proposal' =>  array(
                     'select' => 'ref AS label'
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'SupplierProposal'
+                    ,'type' => 'SupplierProposal' // Représente le nom de la class
                 )
                 ,'commande_fournisseur' =>  array(
                     'select' => 'ref AS label'
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'CommandeFournisseur'
+                    ,'type' => 'CommandeFournisseur' // Représente le nom de la class
                 )
                 ,'facture_fourn' =>  array(
                     'select' => 'ref AS label'
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
-                    ,'type' => 'FactureFournisseur'
+                    ,'type' => 'FactureFournisseur' // Représente le nom de la class
+                )
+
+                ,'projet' =>  array(
+                    'select' => 'CONCAT(ref, \' \', title) AS label'
+                    ,'fields' => array('ref', 'title')
+                    ,'use_natural_search' => false
+                    ,'entity' => true
+                    ,'type' => 'Project' // Représente le nom de la class
                 )
             )
         );
@@ -375,8 +385,18 @@ class Network extends SeedObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
+            $last_title = null;
             while ($obj = $this->db->fetch_object($resql))
             {
+                if ($last_title === null || $last_title != 'NetworkItemTitle'.$obj->type)
+                {
+                    $last_title = 'NetworkItemTitle'.$obj->type;
+                    $TRes[] = array(
+                        'label' => '<b class="network-ui-disabled" >'.$langs->trans($last_title).'</b>'
+                        ,'disabled' => 1
+                    );
+                }
+
                 $TRes[] = array(
                     'key' => $obj->rowid.'-'.$obj->type
                     ,'value' => trim($obj->label)
@@ -475,8 +495,7 @@ class Network extends SeedObject
 
                 if ($res > 0)
                 {
-                    $addmoreclass = 'object ';
-                    if ($o->element == 'user' || $o->element == 'usergroup' || $o->element == 'societe' || $o->element == 'contact') $addmoreclass = 'user ';
+                    if (empty($obj->link)) $obj->link = '&ndash;';
 
                     if(method_exists($o, 'getNomUrl'))
                     {
@@ -485,13 +504,13 @@ class Network extends SeedObject
 
                         if (!empty($url))
                         {
-                            $url = preg_replace('/class="/', 'class="'.$addmoreclass.$addclass.' ', $url, 1);
+                            $url = preg_replace('/class="/', 'class="network_element '.$o->element.' '.$addclass.' ', $url, 1);
                         }
                         $obj->url = $url;
                     }
                     elseif($o->element == 'usergroup')
                     {
-                        $url = '<a class="'.$addmoreclass.$addclass.'" href="'.dol_buildpath('/user/group/card.php?id='.$o->id, 1).'">'.$o->name.'</a>';
+                        $url = '<a class="network_element '.$o->element.' '.$addclass.'" href="'.dol_buildpath('/user/group/card.php?id='.$o->id, 1).'">'.$o->name.'</a>';
                         $obj->url = $url;
                     }
 

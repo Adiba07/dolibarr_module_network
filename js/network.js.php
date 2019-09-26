@@ -33,7 +33,44 @@ $(document).ready(function() {
 	<?php
     if (!empty($user->rights->network->write)) {
     ?>
-        var $button = $('#network-add-comment input[name=btcomment]').click(function () {
+        $("input#search_network_target").autocomplete('option', 'select', function( event, ui ) {		// Function ran once new value has been selected into javascript combo
+            console.log("select triggered from Network module");
+            if (ui.item.disabled) {
+                setTimeout(function() {
+                    $('input#search_network_target').autocomplete('search', $('input#search_network_target').val()).focus()
+                }, 1);
+
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            $("#network_target").val(ui.item.id).trigger("change");	// Select new value
+
+            // Update an input
+            if (ui.item.update) {
+                console.log("Make action update on each ui.item.update")
+                // loop on each "update" fields
+                $.each(ui.item.update, function (key, value) {
+                    $("#" + key).val(value).trigger("change");
+                });
+            }
+            if (ui.item.textarea) {
+                console.log("Make action textarea on each ui.item.textarea")
+                $.each(ui.item.textarea, function (key, value) {
+                    if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
+                        CKEDITOR.instances[key].setData(value);
+                        CKEDITOR.instances[key].focus();
+                    } else {
+                        $("#" + key).html(value);
+                        $("#" + key).focus();
+                    }
+                });
+            }
+
+            $("#search_network_target").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
+        });
+
+        $('#network-add-comment input[name=btcomment]').click(function () {
             addComment();
         });
 

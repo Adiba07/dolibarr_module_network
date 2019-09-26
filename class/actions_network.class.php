@@ -146,15 +146,13 @@ class ActionsNetwork
 
                     <div class="clearboth"></div>
                 </div>
-
-                <script type="text/javascript" src="<?php echo dol_buildpath('/network/js/network.js.php?fk_source='.$this->currentObject->id.'&sourcetype='.get_class($this->currentObject), 1); ?>"></script>
             <?php
-
             }
 
             if (!empty($user->rights->network->read))
             {
             ?>
+                <script type="text/javascript" src="<?php echo dol_buildpath('/network/js/network.js.php?fk_source='.$this->currentObject->id.'&sourcetype='.get_class($this->currentObject), 1); ?>"></script>
                 <div id="network-comments" class="comments"></div>
             <?php
             }
