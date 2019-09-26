@@ -141,7 +141,7 @@ class ActionsNetwork
 
                     </div>
                     <div id="network-add-comment" rel="add_comment" class="login_block_elem">
-                        <input type="button" name="btcomment" class="button butAction" value="Commenter ça">
+                        <input type="button" name="btcomment" class="button butAction" value="<?php echo $langs->trans('NetworkAddLink'); ?>">
                     </div>
 
                     <div class="clearboth"></div>
