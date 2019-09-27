@@ -385,7 +385,7 @@ class Network extends SeedObject
             if ($Tab['entity'])
             {
                 if (!empty($conf->multicompany->enabled) && !empty($Tab['multicompany_element'])) $sql.= ' WHERE entity IN ('.getEntity($Tab['multicompany_element']).')';
-                $sql.= ' WHERE entity = '.$conf->entity;
+                else $sql.= ' WHERE entity = '.$conf->entity;
             }
             else $sql.= ' WHERE 1';
             if (!empty($Tab['use_natural_search'])) $sql.= natural_search($Tab['fields'], $queryString);
