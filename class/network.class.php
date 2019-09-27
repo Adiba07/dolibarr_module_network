@@ -291,7 +291,7 @@ class Network extends SeedObject
                     ,'type' => 'UserGroup' // Représente le nom de la class
                 )
                 ,'societe' => array(
-                    'select' => 'CONCAT(code_client, \' \', nom) AS label'
+                    'select' => 'CONCAT((CASE WHEN code_client IS NULL THEN \'\' ELSE code_client END), \' \', nom) AS label'
                     ,'fields' => array('code_client', 'nom')
                     ,'use_natural_search' => true
                     ,'entity' => true
