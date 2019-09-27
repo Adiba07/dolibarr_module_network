@@ -23,6 +23,8 @@
 #network-panel {
     float: none;
     clear: both;
+    height: 50px;
+    line-height: 50px;
 }
 
 #network-header, #network-current-object, #network-add-comment {

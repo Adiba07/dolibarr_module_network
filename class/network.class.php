@@ -295,6 +295,7 @@ class Network extends SeedObject
                     ,'fields' => array('code_client', 'nom')
                     ,'use_natural_search' => true
                     ,'entity' => true
+                    ,'multicompany_element' => 'societe'
                     ,'type' => 'Societe' // Représente le nom de la class
                 )
                 ,'socpeople' => array(
@@ -311,6 +312,7 @@ class Network extends SeedObject
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
+                    ,'multicompany_element' => 'propal'
                     ,'type' => 'Propal' // Représente le nom de la class
                 )
                 ,'commande' =>  array(
@@ -318,13 +320,15 @@ class Network extends SeedObject
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
+                    ,'multicompany_element' => 'commande'
                     ,'type' => 'Commande' // Représente le nom de la class
                 )
                 ,'facture' =>  array(
-                    'select' => 'ref AS label'
-                    ,'fields' => array('ref')
+                    'select' => ((int) DOL_VERSION < 9.0) ? 'facnumber AS label' : 'ref AS label'
+                    ,'fields' => ((int) DOL_VERSION < 9.0) ? array('facnumber') : array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
+                    ,'multicompany_element' => 'facture'
                     ,'type' => 'Facture' // Représente le nom de la class
                 )
                 ,'supplier_proposal' =>  array(
@@ -332,6 +336,7 @@ class Network extends SeedObject
                     ,'fields' => array('ref')
                     ,'use_natural_search' => false
                     ,'entity' => true
+                    ,'multicompany_element' => 'supplier_proposal'
                     ,'type' => 'SupplierProposal' // Représente le nom de la class
                 )
                 ,'commande_fournisseur' =>  array(
@@ -354,6 +359,7 @@ class Network extends SeedObject
                     ,'fields' => array('ref', 'title')
                     ,'use_natural_search' => false
                     ,'entity' => true
+                    ,'multicompany_element' => 'project'
                     ,'type' => 'Project' // Représente le nom de la class
                 )
             )
@@ -376,9 +382,14 @@ class Network extends SeedObject
         {
             if (!empty($sql)) $sql.= ' UNION ';
             $sql.= '( SELECT rowid, '.$Tab['select'].', \''.$Tab['type'].'\' AS type FROM '.MAIN_DB_PREFIX.$table;
-            if ($Tab['entity']) $sql.= ' WHERE entity = '.$conf->entity;
+            if ($Tab['entity'])
+            {
+                if (!empty($conf->multicompany->enabled) && !empty($Tab['multicompany_element'])) $sql.= ' WHERE entity IN ('.getEntity($Tab['multicompany_element']).')';
+                $sql.= ' WHERE entity = '.$conf->entity;
+            }
             else $sql.= ' WHERE 1';
-            $sql.= natural_search($Tab['fields'], $queryString);
+            if (!empty($Tab['use_natural_search'])) $sql.= natural_search($Tab['fields'], $queryString);
+            else $sql.= ' AND '.$Tab['fields'].' = \''.$this->db->escape($queryString).'\'';
             $sql.= ' LIMIT 10 )';
         }
 
