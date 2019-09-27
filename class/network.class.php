@@ -277,7 +277,7 @@ class Network extends SeedObject
         $TTableSearchAvailable = array(
             '@' => array(
                 'user' => array(
-                    'select' => empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'CONCAT(lastname, \' \', firstname) AS label' : 'CONCAT(firstname, lastname) AS label'
+                    'select' => empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'CONCAT((CASE WHEN lastname IS NULL THEN \'\' ELSE lastname END), \' \', (CASE WHEN firstname IS NULL THEN \'\' ELSE firstname END)) AS label' : 'CONCAT(firstname, lastname) AS label'
                     ,'fields' => array('lastname', 'firstname')
                     ,'use_natural_search' => true
                     ,'entity' => true
@@ -299,7 +299,7 @@ class Network extends SeedObject
                     ,'type' => 'Societe' // Représente le nom de la class
                 )
                 ,'socpeople' => array(
-                    'select' => empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'CONCAT(lastname, \' \', firstname) AS label' : 'CONCAT(firstname, lastname) AS label'
+                    'select' => empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'CONCAT((CASE WHEN lastname IS NULL THEN \'\' ELSE lastname END), \' \', (CASE WHEN firstname IS NULL THEN \'\' ELSE firstname END)) AS label' : 'CONCAT((CASE WHEN firstname IS NULL THEN \'\' ELSE firstname END), \' \', (CASE WHEN lastname IS NULL THEN \'\' ELSE lastname END)) AS label'
                     ,'fields' => array('lastname', 'firstname')
                     ,'use_natural_search' => true
                     ,'entity' => true
