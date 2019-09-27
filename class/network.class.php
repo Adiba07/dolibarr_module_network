@@ -388,8 +388,21 @@ class Network extends SeedObject
                 else $sql.= ' WHERE entity = '.$conf->entity;
             }
             else $sql.= ' WHERE 1';
+
             if (!empty($Tab['use_natural_search'])) $sql.= natural_search($Tab['fields'], $queryString);
-            else $sql.= ' AND '.$Tab['fields'].' = \''.$this->db->escape($queryString).'\'';
+            else
+            {
+                $sql.= ' AND (';
+                $filter = '';
+                foreach ($Tab['fields'] as $field)
+                {
+                    if (!empty($filter)) $filter.= ' OR';
+                    $filter.= ' '.$field.' LIKE \''.$this->db->escape($queryString).'\'';
+                }
+
+                $sql.= $filter.' )';
+            }
+
             $sql.= ' LIMIT 10 )';
         }
 
