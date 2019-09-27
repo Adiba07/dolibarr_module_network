@@ -87,29 +87,6 @@ class ActionsNetwork
      * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
      * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
      */
-    public function printTopRightMenu($parameters, &$object, &$action, $hookmanager)
-    {
-        global $user,$langs;
-
-        if (empty($user->rights->network->view->all)) return 0;
-
-        $langs->load('network@network');
-
-        $text = '<a id="network_block_other" href="'. dol_buildpath('/network/hashtag.php', 1).'"><span class="fa fa-hashtag atoplogin" aria-hidden="true"></span></a>';
-        $hookmanager->resPrint.= Form::textwithtooltip('', $langs->trans("networkToolTip"), 2, 1, $text, 'network_block_other', 2);
-
-        return 0;
-    }
-
-    /**
-     * Overloading the doActions function : replacing the parent's function with the one below
-     *
-     * @param   array()         $parameters     Hook metadatas (context, etc...)
-     * @param   CommonObject    $object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-     * @param   string          $action        Current action (if set). Generally create or edit or null
-     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-     * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
-     */
     public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
     {
         global $langs, $user;

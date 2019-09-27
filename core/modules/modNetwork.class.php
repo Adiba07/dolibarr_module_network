@@ -93,7 +93,6 @@ class modNetwork extends DolibarrModules
             'hooks' => array(
                 'globalcard'
                 ,'groupcard'
-                ,'toprightmenu'
             )
             ,'css' => array('/network/css/network.css')
         );

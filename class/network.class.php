@@ -508,11 +508,13 @@ class Network extends SeedObject
             {
                 if ($type === 'source')
                 {
+                    if (!class_exists($obj->targettype)) continue;
                     $o = new $obj->targettype($db);
                     $res = $o->fetch($obj->fk_target);
                 }
                 else
                 {
+                    if (!class_exists($obj->sourcetype)) continue;
                     $o = new $obj->sourcetype($db);
                     $res = $o->fetch($obj->fk_source);
                 }
