@@ -108,9 +108,10 @@ class ActionsNetwork
                         <img src="<?php echo dol_buildpath('/network/img/network.png', 1); ?>" border="0" align="absmiddle" />
                         &nbsp;<?php echo Form::textwithtooltip('<b>'.$langs->trans('Network').'</b>', $langs->trans('NetworkHowToUse'), 2, 1, '<span class="fa fa-question-circle" aria-hidden="true"></span>', 'networkHelp', 2); ?>
                     </div>
-                    <div id="network-current-object" rel="current_object" class="login_block_elem center nowrap tdoverflowmax300"><b><?php echo $this->currentObject->getNomUrl(); ?> : </b></div>
+                    <div id="network-current-object" rel="current_object" class="login_block_elem center nowrap tdoverflowmax300"><b><?php echo $this->currentObject->getNomUrl(1); ?> : </b></div>
                     <div id="network-writer" rel="writer" class="login_block_elem">
-                        <input type="text" name="network_link" value="" placeholder="<?php echo $langs->trans('NetworkPlaceHolderLink'); ?>" />
+                        <?php echo ajax_autocompleter('', 'network_link', dol_buildpath('/network/script/interface.php', 1), '&action=getLinks&json=1', 2, 0, array()); ?>
+                        <input type="text" class="" name="search_network_link" id="search_network_link" value="" placeholder="<?php echo $langs->trans('NetworkPlaceHolderLink'); ?>" />
 
                         <?php echo ajax_autocompleter('', 'network_target', dol_buildpath('/network/script/interface.php', 1), '&action=search&json=1&fk_source='.$this->currentObject->id.'&sourcetype='.get_class($this->currentObject), 2, 0, array()); ?>
                         <style type="text/css">.ui-autocomplete { z-index: 250; }</style>
@@ -138,6 +139,19 @@ class ActionsNetwork
             </div>
             <?php
         }
+
+        return 0;
+    }
+
+    function printTopRightMenu($parameters, &$object, &$action, $hookmanager)
+    {
+        global $user,$langs;
+
+        if (empty($user->rights->network->read)) return 0;
+
+        $langs->load('network@network');
+        $text = '<a id="network_block_other" href="'. dol_buildpath('network/list.php', 1).'"><span class="fa fa-hashtag atoplogin" aria-hidden="true"></span></a>';
+        $hookmanager->resPrint.= Form::textwithtooltip('', $langs->trans("networkToolTip"), 2, 1, $text, 'network_block_other', 2);
 
         return 0;
     }

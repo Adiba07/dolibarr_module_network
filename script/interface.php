@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) @@YEAR@@ ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2019 ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,26 @@ switch ($action) {
         $object->fetch(GETPOST('id'));
         if ($object->delete($user) > 0) __out(array('success' => $langs->transnoentitiesnoconv('network_success_delete_comment')));
         else __out(array('error' => $langs->transnoentitiesnoconv('network_error_delete_comment', $object->db->lasterror())));
+
+        break;
+    case 'getLinks':
+        $TRes = array();
+        $sql = 'SELECT DISTINCT link FROM '.MAIN_DB_PREFIX.'network';
+        $sql.= ' WHERE link LIKE \'%'.$db->escape(GETPOST('network_link')).'%\'';
+        $sql.= ' ORDER BY link LIMIT 10';
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $db->fetch_object($resql))
+            {
+                $TRes[] = array(
+                    'key' => $obj->link
+                    ,'value' => trim($obj->link)
+                    ,'label' => trim($obj->link)
+                );
+            }
+        }
+        __out($TRes);
 
         break;
 }
