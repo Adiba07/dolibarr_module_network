@@ -73,7 +73,7 @@ class ActionsNetwork
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-	    $this->currentObject = $object;
+	    $this->currentObject = &$object;
 
 		return 0;
 	}
