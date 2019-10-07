@@ -46,7 +46,6 @@ NetworkItemTitleProject=Opportunités | Projets
 
 # MIGRATION
 RowsNotMigrated=Lignes non migrées (%d lignes)
-RowAlreadyMigrated=ligne déjà migrée précédemment
 SourceNotFound=source introuvable en base
 NoMatchForTag=cible introuvable en base
 SourceNotFound=source introuvable en base

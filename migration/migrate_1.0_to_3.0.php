@@ -166,20 +166,6 @@ function check_source_exists($db, $rowid, $type)
 }
 
 /**
- * Checks if a source row has been migrated previously.
- * @param $db
- * @param int $rowid  ID of a row in the old table (llx_netmsg)
- * @return int  -1: database error, 0: not migrated already, 1 or more: migrated
- */
-function check_already_migrated($db, $rowid)
-{
-    $sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'network' . ' WHERE import_key = ' . $rowid;
-    $resql = $db->query($sql);
-    if (!$resql) return -1;
-    return $db->num_rows($resql);
-}
-
-/**
  * Migrates data from llx_netmsg (v1.0) to llx_network (v3.0).
  * @param DoliDB $db
  * @param bool $dryRun  If true, print the SQL queries instead of executing them.
@@ -227,17 +213,6 @@ function migrate1To3($db, $dryRun = true)
             } elseif ($source_exists == 0) {
                 $TNetworkNotImported[] = $obj;
                 $TNetworkNotImportedReasons[] = 'SourceNotFound';
-                continue;
-            }
-            $already_migrated = check_already_migrated($db, $obj->rowid);
-            if ($already_migrated == -1) {
-                $TNetworkNotImported[] = $obj;
-                $TNetworkNotImportedReasons[] = 'DatabaseError';
-                dol_print_error($db);
-                continue;
-            } elseif ($already_migrated > 0) {
-                $TNetworkNotImported[] = $obj;
-                $TNetworkNotImportedReasons[] = 'RowAlreadyMigrated';
                 continue;
             }
 
