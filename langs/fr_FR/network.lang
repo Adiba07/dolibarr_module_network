@@ -43,3 +43,16 @@ NetworkItemTitleSupplierProposal=Demandes de prix fournisseur
 NetworkItemTitleCommandeFournisseur=Commandes fournisseur
 NetworkItemTitleFactureFournisseur=Factures fournisseur
 NetworkItemTitleProject=Opportunités | Projets
+
+# MIGRATION
+RowsNotMigrated=Lignes non migrées (%d lignes)
+RowAlreadyMigrated=ligne déjà migrée précédemment
+SourceNotFound=source introuvable en base
+NoMatchForTag=cible introuvable en base
+SourceNotFound=source introuvable en base
+NoTagFound=Aucun tag dans le commentaire
+DatabaseError=Erreur de base de données
+MigrationFinished=Migration terminée (%d lignes migrées)
+SimulationFinished=Simulation terminée (%d lignes auraient été migrées)
+TagAmbiguous=tag ambigu
+Reason=Raison
