@@ -76,6 +76,7 @@ $(document).ready(function() {
 
         function addComment() {
             var link = $('#network-writer input[name=network_link]').val();
+            if(link === '') link = $('#network-writer input[name=search_network_link]').val();
             var target = $('#network-writer input[name=network_target]').val();
 
             $.ajax({
